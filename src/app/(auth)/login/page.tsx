@@ -14,7 +14,9 @@ export default async function LoginPage({
   searchParams: Promise<{ error?: string; next?: string }>
 }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   // 이미 로그인되어 있으면 홈으로 리다이렉트
   if (user) {
@@ -28,13 +30,11 @@ export default async function LoginPage({
       <section className="w-full max-w-sm space-y-6">
         <header className="text-center">
           <h1 className="text-2xl font-bold">Blog Platform</h1>
-          <p className="mt-2 text-muted-foreground">
-            GitHub 계정으로 로그인하세요
-          </p>
+          <p className="text-muted-foreground mt-2">GitHub 계정으로 로그인하세요</p>
         </header>
 
         {error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-center text-sm text-destructive">
+          <div className="bg-destructive/10 text-destructive rounded-md p-3 text-center text-sm">
             로그인에 실패했습니다. 다시 시도해주세요.
           </div>
         )}

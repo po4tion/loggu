@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/client'
+import { useState } from 'react'
 
 interface LoginButtonProps {
   next?: string
@@ -26,12 +26,7 @@ export function LoginButton({ next }: LoginButtonProps) {
   }
 
   return (
-    <Button
-      onClick={handleLogin}
-      disabled={isLoading}
-      className="w-full"
-      size="lg"
-    >
+    <Button onClick={handleLogin} disabled={isLoading} className="w-full" size="lg">
       {isLoading ? (
         '로그인 중...'
       ) : (
@@ -46,12 +41,7 @@ export function LoginButton({ next }: LoginButtonProps) {
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
