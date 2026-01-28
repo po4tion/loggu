@@ -1,0 +1,31 @@
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import { Button } from '@/components/ui/button'
+import { UserMenu } from '@/components/layout/user-menu'
+
+export async function Header() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  return (
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
+      <nav className="container flex h-14 items-center justify-between">
+        <Link href="/" className="flex items-center space-x-2">
+          <span className="text-xl font-bold">Blog Platform</span>
+        </Link>
+
+        <div className="flex items-center gap-4">
+          {user ? (
+            <UserMenu user={user} />
+          ) : (
+            <Button asChild variant="default" size="sm">
+              <Link href="/login">로그인</Link>
+            </Button>
+          )}
+        </div>
+      </nav>
+    </header>
+  )
+}
