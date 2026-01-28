@@ -1,3 +1,6 @@
+// Re-export database types
+export type { Database, Tables, InsertTables, UpdateTables, Functions } from './database.types'
+
 // User/Profile types
 export interface Profile {
   id: string
@@ -15,9 +18,9 @@ export interface Post {
   author_id: string
   title: string
   slug: string
-  content: string
+  content: string | null
   excerpt: string | null
-  cover_image: string | null
+  cover_image_url: string | null
   published: boolean
   views: number
   created_at: string
@@ -63,9 +66,8 @@ export interface CommentWithAuthor extends Comment {
 
 // Like types
 export interface Like {
-  id: string
-  post_id: string
   user_id: string
+  post_id: string
   created_at: string
 }
 
