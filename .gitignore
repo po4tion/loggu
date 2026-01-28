@@ -36,5 +36,7 @@ coverage
 
 # Project docs (AI generated)
 docs
-.claude
 claude.md
+
+# Claude Code
+.claude
