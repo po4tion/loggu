@@ -1,6 +1,5 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -19,13 +18,10 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
-  const router = useRouter()
-
   const handleLogout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.refresh()
-    router.push('/')
+    window.location.href = '/'
   }
 
   const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email

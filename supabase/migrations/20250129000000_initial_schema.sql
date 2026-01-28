@@ -40,9 +40,12 @@ $$ LANGUAGE plpgsql;
 -- Function: handle_new_user
 -- Creates a profile automatically when a new user signs up
 CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
-  INSERT INTO profiles (id, username, display_name, avatar_url)
+  INSERT INTO public.profiles (id, username, display_name, avatar_url)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'user_name', 'user_' || substr(NEW.id::text, 1, 8)),
@@ -51,7 +54,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql;
 
 -- Function: increment_post_views
 -- Increments view count for a post (bypasses RLS)
@@ -172,6 +175,10 @@ CREATE TABLE likes (
 );
 
 COMMENT ON TABLE likes IS 'Post likes';
+
+-- Grant permissions for auth trigger
+GRANT USAGE ON SCHEMA public TO supabase_auth_admin;
+GRANT INSERT ON public.profiles TO supabase_auth_admin;
 
 -- ============================================
 -- 3. INDEXES
