@@ -1,4 +1,40 @@
-# AI generated files 
-/docs
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js
+.next
+out
+build
+
+# Environment
+.env
+.env.local
+.env.production.local
+
+# Debug logs
+.pnpm-debug.log*
+
+# IDE
+.idea
+.vscode
+
+# OS
+.DS_Store
+
+# TypeScript
+*.tsbuildinfo
+
+# Vercel
+.vercel
+
+# Supabase
+supabase/.temp
+
+# Testing
+coverage
+
+# Project docs (AI generated)
+docs
 .claude
 claude.md
