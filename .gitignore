@@ -38,6 +38,5 @@ coverage
 docs
 claude.md
 
-# Claude Code (keep commands for sharing)
-.claude/*
-!.claude/commands
+# Claude Code
+.claude
