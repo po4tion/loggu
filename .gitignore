@@ -36,5 +36,8 @@ coverage
 
 # Project docs (AI generated)
 docs
-.claude
 claude.md
+
+# Claude Code (keep commands for sharing)
+.claude/*
+!.claude/commands
