@@ -71,6 +71,22 @@ export interface Like {
   created_at: string
 }
 
+// RPC function return types
+export interface PostWithTagsRpcResult {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  cover_image_url: string | null
+  published_at: string | null
+  views: number
+  author_username: string
+  author_display_name: string | null
+  author_avatar_url: string | null
+  likes_count: number
+  tags: string | null // JSON string of tag names
+}
+
 // API Response types
 export interface ApiResponse<T> {
   data: T | null
