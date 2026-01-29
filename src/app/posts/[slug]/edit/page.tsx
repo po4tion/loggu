@@ -58,7 +58,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
     .select('tags(name)')
     .eq('post_id', post.id)
 
-  const tags = postTags?.map((pt) => (pt.tags as { name: string }).name) || []
+  const tags = postTags?.map((pt) => (pt.tags as unknown as { name: string }).name) || []
 
   return (
     <main className="container mx-auto max-w-4xl py-10">

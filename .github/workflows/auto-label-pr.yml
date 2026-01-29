@@ -1,0 +1,118 @@
+name: Auto Label PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Analyze commits and add labels
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // PR의 모든 커밋 가져오기
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            console.log(`Found ${commits.length} commits in PR`);
+
+            const labelMap = {
+              'feat': 'feature',
+              'fix': 'bug',
+              'docs': 'documentation',
+              'style': 'style',
+              'refactor': 'refactor',
+              'perf': 'performance',
+              'test': 'test',
+              'chore': 'chore',
+              'hotfix': 'hotfix',
+              'ui': 'UI/UX',
+              'security': 'security',
+              'release': 'release'
+            };
+
+            const emojiMap = {
+              '✨': 'feature',
+              '🐛': 'bug',
+              '📚': 'documentation',
+              '💎': 'style',
+              '♻️': 'refactor',
+              '⚡': 'performance',
+              '✅': 'test',
+              '🔧': 'chore',
+              '🚨': 'hotfix',
+              '🎨': 'UI/UX',
+              '🔐': 'security',
+              '🚀': 'release'
+            };
+
+            // 라벨 추출 함수
+            const labelsToAdd = new Set();
+
+            function analyzeText(text) {
+              // 이모지 감지
+              for (const [emoji, label] of Object.entries(emojiMap)) {
+                if (text.includes(emoji)) {
+                  labelsToAdd.add(label);
+                }
+              }
+
+              // 타입 감지 (예: "feat:", "fix:", "release:" 등)
+              const typeMatch = text.match(/^\s*(?:[\p{Emoji}]\s+)?(\w+):/u);
+              if (typeMatch) {
+                const type = typeMatch[1];
+                if (labelMap[type]) {
+                  labelsToAdd.add(labelMap[type]);
+                }
+              }
+            }
+
+            // PR 제목 분석 (release: 등)
+            const prTitle = context.payload.pull_request.title;
+            console.log(`Analyzing PR title: ${prTitle}`);
+            analyzeText(prTitle);
+
+            // 커밋 메시지 분석
+            commits.forEach(commitData => {
+              const message = commitData.commit.message;
+              if (!message) return;
+
+              // 커밋 메시지의 첫 줄(제목)만 분석
+              const firstLine = message.split('\n')[0];
+              console.log(`Analyzing commit: ${firstLine}`);
+              analyzeText(firstLine);
+            });
+
+            if (labelsToAdd.size === 0) {
+              console.log('No labels to add based on PR title and commit messages');
+              return;
+            }
+
+            // 라벨 추가
+            const labels = Array.from(labelsToAdd);
+            console.log(`Adding labels: ${labels.join(', ')}`);
+
+            try {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: labels
+              });
+              console.log('Labels added successfully');
+            } catch (error) {
+              console.log(`Warning: Some labels might not exist in the repository.`);
+              console.log(`Error: ${error.message}`);
+              console.log('Please ensure the following labels exist in your repository:');
+              console.log(labels.join(', '));
+            }

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { UserMenu } from '@/components/layout/user-menu'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 
 export async function Header() {
   const supabase = await createClient()
@@ -26,7 +27,8 @@ export async function Header() {
           <span className="text-xl font-bold">Blog Platform</span>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
           {user && profile ? (
             <>
               <Button asChild variant="outline" size="sm">

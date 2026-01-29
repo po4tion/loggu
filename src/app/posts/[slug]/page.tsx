@@ -158,7 +158,8 @@ export default async function PostPage({ params }: PostPageProps) {
     .select('tags(name, slug)')
     .eq('post_id', post.id)
 
-  const tags = postTags?.map((pt) => pt.tags as { name: string; slug: string }) || []
+  const tags =
+    postTags?.map((pt) => pt.tags as unknown as { name: string; slug: string }) || []
 
   const author = post.profiles as unknown as {
     id: string
@@ -236,7 +237,8 @@ export default async function PostPage({ params }: PostPageProps) {
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
-                  <Link key={tag.slug} href={`/tags/${tag.slug}`}>
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  <Link key={tag.slug} href={`/tags/${tag.slug}` as any}>
                     <Badge variant="secondary" className="hover:bg-secondary/80">
                       {tag.name}
                     </Badge>

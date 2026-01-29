@@ -18,7 +18,7 @@ export async function PopularTags() {
   const countMap = new Map<string, { name: string; slug: string; count: number }>()
 
   for (const item of tagCounts) {
-    const tag = item.tags as { name: string; slug: string }
+    const tag = item.tags as unknown as { name: string; slug: string }
     if (!tag) continue
 
     const existing = countMap.get(tag.slug)
@@ -43,7 +43,11 @@ export async function PopularTags() {
       <h2 className="mb-4 text-lg font-semibold">인기 태그</h2>
       <div className="flex flex-wrap gap-2">
         {popularTags.map((tag) => (
-          <Link key={tag.slug} href={`/tags/${tag.slug}`}>
+          <Link
+            key={tag.slug}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            href={`/tags/${tag.slug}` as any}
+          >
             <Badge variant="outline" className="hover:bg-secondary">
               {tag.name}
               <span className="ml-1 text-muted-foreground">({tag.count})</span>
