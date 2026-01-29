@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { UserMenu } from '@/components/layout/user-menu'
+import { MobileNav } from '@/components/layout/mobile-nav'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 
 export async function Header() {
@@ -23,11 +24,14 @@ export async function Header() {
   return (
     <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <nav className="container mx-auto flex h-14 items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold">Blog Platform</span>
-        </Link>
-
         <div className="flex items-center gap-2">
+          <MobileNav user={user} profile={profile} />
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="text-xl font-bold">Blog Platform</span>
+          </Link>
+        </div>
+
+        <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
           {user && profile ? (
             <>
