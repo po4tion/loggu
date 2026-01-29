@@ -132,7 +132,7 @@ export default async function TagPage({ params }: TagPageProps) {
       </header>
 
       {postsForCard.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-2">
           {postsForCard.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

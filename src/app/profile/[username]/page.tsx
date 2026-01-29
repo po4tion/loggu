@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { PostCard } from '@/components/post/post-card'
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>
@@ -84,7 +84,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   // Fetch posts - 본인이면 모든 글, 아니면 발행된 글만
   let postsQuery = supabase
     .from('posts')
-    .select('id, title, slug, excerpt, published, published_at, created_at')
+    .select('id, title, slug, excerpt, cover_image_url, published, published_at, created_at, views, reading_time_minutes')
     .eq('author_id', profile.id)
     .order('created_at', { ascending: false })
 
@@ -95,7 +95,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const { data: posts } = await postsQuery
 
   return (
-    <main className="container mx-auto max-w-4xl px-6 py-8 md:py-10">
+    <main className="container mx-auto max-w-6xl px-6 py-8 md:py-10">
       <article className="flex flex-col items-center text-center">
         <Avatar className="h-32 w-32">
           <AvatarImage src={profile.avatar_url ?? undefined} alt={displayName} />
@@ -127,44 +127,26 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         </h2>
 
         {posts && posts.length > 0 ? (
-          <ul className="mt-6 divide-y">
-            {posts.map((post) => {
-              const date = post.published_at || post.created_at
-              const formattedDate = new Date(date).toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })
-
-              return (
-                <li key={post.id}>
-                  <Link
-                    href={`/posts/${post.slug}`}
-                    className="flex items-center justify-between gap-4 py-4 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium truncate">{post.title}</h3>
-                        {!post.published && (
-                          <Badge variant="secondary" className="shrink-0">
-                            임시저장
-                          </Badge>
-                        )}
-                      </div>
-                      {post.excerpt && (
-                        <p className="text-muted-foreground mt-1 text-sm truncate">
-                          {post.excerpt}
-                        </p>
-                      )}
-                    </div>
-                    <time className="text-muted-foreground shrink-0 text-sm">
-                      {formattedDate}
-                    </time>
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            {posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={{
+                  id: post.id,
+                  title: post.title,
+                  slug: post.slug,
+                  excerpt: post.excerpt,
+                  cover_image_url: post.cover_image_url,
+                  published_at: post.published_at,
+                  views: post.views,
+                  author_username: profile.username,
+                  author_display_name: profile.display_name,
+                  author_avatar_url: profile.avatar_url,
+                  reading_time_minutes: post.reading_time_minutes,
+                }}
+              />
+            ))}
+          </div>
         ) : (
           <p className="text-muted-foreground mt-6 text-center py-8">
             아직 작성한 글이 없습니다.

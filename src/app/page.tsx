@@ -93,11 +93,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         <Suspense
           fallback={
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 lg:grid-cols-2">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-muted h-80 animate-pulse rounded-lg"
+                  className="bg-muted h-36 animate-pulse rounded-lg"
                 />
               ))}
             </div>

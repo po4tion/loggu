@@ -1,8 +1,7 @@
-import Link from 'next/link'
-import Image from 'next/image'
+import { Card } from '@/components/ui/card'
 import { Clock } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardFooter, CardHeader } from '@/components/ui/card'
+import Image from 'next/image'
+import Link from 'next/link'
 
 interface PostCardProps {
   post: {
@@ -21,10 +20,8 @@ interface PostCardProps {
 }
 
 export function PostCard({ post }: PostCardProps) {
-  const displayName = post.author_display_name || post.author_username
-  const initials = displayName.slice(0, 2).toUpperCase()
   const publishedDate = post.published_at
-    ? new Date(post.published_at).toLocaleDateString('ko-KR', {
+    ? new Date(post.published_at).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -32,59 +29,53 @@ export function PostCard({ post }: PostCardProps) {
     : null
 
   return (
-    <Card className="group flex h-full flex-col gap-0 overflow-hidden py-0 transition-all hover:-translate-y-1 hover:shadow-lg">
-      <Link href={`/posts/${post.slug}`} className="flex flex-1 flex-col">
-        {post.cover_image_url ? (
-          <div className="p-4 pb-0">
-            <div className="relative aspect-video overflow-hidden rounded-lg">
-              <Image
-                src={post.cover_image_url}
-                alt={post.title}
-                fill
-                className="object-cover transition-transform group-hover:scale-105"
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="p-4 pb-0">
-            <div className="bg-muted flex aspect-video items-center justify-center rounded-lg">
-              <span className="text-muted-foreground text-4xl">📝</span>
-            </div>
+    <Card className="group overflow-hidden py-4 transition-all hover:shadow-lg md:py-0">
+      <Link href={`/posts/${post.slug}`} className="flex flex-col px-4 md:flex-row md:gap-4 md:p-4">
+        {/* 모바일: 상단 이미지 */}
+        {post.cover_image_url && (
+          <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-lg md:hidden">
+            <Image
+              src={post.cover_image_url}
+              alt={post.title}
+              fill
+              className="object-cover transition-transform group-hover:scale-105"
+            />
           </div>
         )}
 
-        <CardHeader className="flex-1 px-4 pt-2 pb-0">
-          <h2 className="line-clamp-2 text-lg font-semibold leading-tight group-hover:text-primary">
-            {post.title}
-          </h2>
-          {post.excerpt && (
-            <p className="text-muted-foreground mt-3 line-clamp-2 text-sm">{post.excerpt}</p>
-          )}
-        </CardHeader>
-      </Link>
+        <div className="flex flex-1 flex-col justify-between md:h-28">
+          <div>
+            <h2 className="text-heading group-hover:text-primary text-base leading-snug font-semibold md:text-lg">
+              {post.title}
+            </h2>
+            {post.excerpt && (
+              <p className="text-subtle mt-2 line-clamp-2 text-sm">{post.excerpt}</p>
+            )}
+          </div>
 
-      <CardFooter className="flex items-center justify-between px-4 pb-2 pt-3">
-        <Link
-          href={`/profile/${post.author_username}`}
-          className="flex items-center gap-2 hover:opacity-80"
-        >
-          <Avatar className="h-7 w-7">
-            <AvatarImage src={post.author_avatar_url ?? undefined} alt={displayName} />
-            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-          </Avatar>
-          <span className="text-sm font-medium">{displayName}</span>
-        </Link>
-
-        <div className="text-muted-foreground flex items-center gap-2 text-sm">
-          {publishedDate && <span>{publishedDate}</span>}
-          {post.reading_time_minutes && (
-            <span className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              {post.reading_time_minutes}분
-            </span>
-          )}
+          <div className="text-muted-foreground mt-3 flex items-center gap-3 text-sm md:mt-4">
+            {publishedDate && <span>{publishedDate}</span>}
+            {post.reading_time_minutes && (
+              <span className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {post.reading_time_minutes} min read
+              </span>
+            )}
+          </div>
         </div>
-      </CardFooter>
+
+        {/* 데스크톱: 우측 이미지 */}
+        {post.cover_image_url && (
+          <div className="relative hidden h-28 w-40 shrink-0 overflow-hidden rounded-lg md:block">
+            <Image
+              src={post.cover_image_url}
+              alt={post.title}
+              fill
+              className="object-cover transition-transform group-hover:scale-105"
+            />
+          </div>
+        )}
+      </Link>
     </Card>
   )
 }
