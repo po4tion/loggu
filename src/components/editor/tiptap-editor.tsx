@@ -18,6 +18,7 @@ export function TiptapEditor({
   placeholder = '내용을 입력하세요...',
 }: TiptapEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: {
