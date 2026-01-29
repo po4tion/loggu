@@ -5,6 +5,12 @@ import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import Youtube from '@tiptap/extension-youtube'
+import { common, createLowlight } from 'lowlight'
+
+// lowlight 인스턴스 생성 (common languages 포함)
+const lowlight = createLowlight(common)
 
 interface TiptapEditorProps {
   content: string
@@ -24,6 +30,13 @@ export function TiptapEditor({
         heading: {
           levels: [1, 2, 3],
         },
+        codeBlock: false, // CodeBlockLowlight 사용
+      }),
+      CodeBlockLowlight.configure({
+        lowlight,
+        HTMLAttributes: {
+          class: 'hljs',
+        },
       }),
       Image.configure({
         HTMLAttributes: {
@@ -36,6 +49,14 @@ export function TiptapEditor({
           class: 'text-primary underline',
         },
       }),
+      Youtube.configure({
+        HTMLAttributes: {
+          class: 'w-full aspect-video rounded-lg',
+        },
+        inline: false,
+        width: 640,
+        height: 360,
+      }),
       Placeholder.configure({
         placeholder,
       }),
@@ -44,6 +65,50 @@ export function TiptapEditor({
     editorProps: {
       attributes: {
         class: 'prose prose-neutral dark:prose-invert max-w-none min-h-[300px] focus:outline-none',
+      },
+      handleDrop: (view, event, _slice, moved) => {
+        if (!moved && event.dataTransfer?.files?.length) {
+          const file = event.dataTransfer.files[0]
+          if (file.type.startsWith('image/')) {
+            event.preventDefault()
+            const reader = new FileReader()
+            reader.onload = () => {
+              const { schema } = view.state
+              const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
+              const node = schema.nodes.image.create({ src: reader.result as string })
+              if (coordinates) {
+                const transaction = view.state.tr.insert(coordinates.pos, node)
+                view.dispatch(transaction)
+              }
+            }
+            reader.readAsDataURL(file)
+            return true
+          }
+        }
+        return false
+      },
+      handlePaste: (view, event) => {
+        const items = event.clipboardData?.items
+        if (items) {
+          for (const item of items) {
+            if (item.type.startsWith('image/')) {
+              event.preventDefault()
+              const file = item.getAsFile()
+              if (file) {
+                const reader = new FileReader()
+                reader.onload = () => {
+                  const { schema } = view.state
+                  const node = schema.nodes.image.create({ src: reader.result as string })
+                  const transaction = view.state.tr.replaceSelectionWith(node)
+                  view.dispatch(transaction)
+                }
+                reader.readAsDataURL(file)
+              }
+              return true
+            }
+          }
+        }
+        return false
       },
     },
     onUpdate: ({ editor }) => {
@@ -183,6 +248,18 @@ function EditorToolbar({ editor }: EditorToolbarProps) {
         title="링크"
       >
         🔗
+      </ToolbarButton>
+      <ToolbarButton
+        onClick={() => {
+          const url = window.prompt('YouTube URL을 입력하세요')
+          if (url) {
+            editor.chain().focus().setYoutubeVideo({ src: url }).run()
+          }
+        }}
+        isActive={false}
+        title="YouTube"
+      >
+        ▶️
       </ToolbarButton>
     </div>
   )

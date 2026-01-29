@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Search, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -8,16 +8,13 @@ import { Button } from '@/components/ui/button'
 
 interface SearchBarProps {
   placeholder?: string
+  initialQuery?: string
 }
 
-export function SearchBar({ placeholder = '글 검색...' }: SearchBarProps) {
+export function SearchBar({ placeholder = '글 검색...', initialQuery = '' }: SearchBarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [query, setQuery] = useState(searchParams.get('q') || '')
-
-  useEffect(() => {
-    setQuery(searchParams.get('q') || '')
-  }, [searchParams])
+  const [query, setQuery] = useState(initialQuery)
 
   const handleSearch = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString())

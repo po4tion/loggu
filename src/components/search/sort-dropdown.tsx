@@ -40,7 +40,7 @@ export function SortDropdown() {
 
   return (
     <Select value={currentSort} onValueChange={handleSortChange}>
-      <SelectTrigger className="w-[130px]" aria-label="정렬 방식 선택">
+      <SelectTrigger className="w-32.5" aria-label="정렬 방식 선택">
         <SelectValue placeholder="정렬" />
       </SelectTrigger>
       <SelectContent>

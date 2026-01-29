@@ -27,31 +27,31 @@ jobs:
             console.log(`Found ${commits.length} commits in PR`);
 
             const labelMap = {
-              'feat': 'feature',
-              'fix': 'bug',
-              'docs': 'documentation',
+              'feat': 'feat',
+              'fix': 'fix',
+              'docs': 'docs',
               'style': 'style',
               'refactor': 'refactor',
-              'perf': 'performance',
+              'perf': 'perf',
               'test': 'test',
               'chore': 'chore',
               'hotfix': 'hotfix',
-              'ui': 'UI/UX',
+              'ui': 'ui',
               'security': 'security',
               'release': 'release'
             };
 
             const emojiMap = {
-              '✨': 'feature',
-              '🐛': 'bug',
-              '📚': 'documentation',
+              '✨': 'feat',
+              '🐛': 'fix',
+              '📚': 'docs',
               '💎': 'style',
               '♻️': 'refactor',
-              '⚡': 'performance',
+              '⚡': 'perf',
               '✅': 'test',
               '🔧': 'chore',
               '🚨': 'hotfix',
-              '🎨': 'UI/UX',
+              '🎨': 'ui',
               '🔐': 'security',
               '🚀': 'release'
             };
