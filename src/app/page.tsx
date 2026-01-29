@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { PopularTags } from '@/components/tag/popular-tags'
 import { SearchFilters } from '@/components/search/search-filters'
@@ -11,6 +12,49 @@ interface HomePageProps {
     sort?: string
     author?: string
   }>
+}
+
+export async function generateMetadata({ searchParams }: HomePageProps): Promise<Metadata> {
+  const params = await searchParams
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+  if (params.q) {
+    const title = `"${params.q}" 검색 결과`
+    const description = `"${params.q}" 검색 결과를 확인하세요`
+
+    return {
+      title,
+      description,
+      robots: { index: false },
+      openGraph: {
+        title,
+        description,
+        url: siteUrl,
+      },
+    }
+  }
+
+  if (params.author) {
+    const title = `${params.author}님의 글`
+    const description = `${params.author}님이 작성한 글 목록`
+
+    return {
+      title,
+      description,
+      robots: { index: false },
+      openGraph: {
+        title,
+        description,
+        url: siteUrl,
+      },
+    }
+  }
+
+  return {
+    alternates: {
+      canonical: siteUrl,
+    },
+  }
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {

@@ -4,8 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 import { LoginButton } from '@/components/auth/login-button'
 
 export const metadata: Metadata = {
-  title: '로그인 | Blog Platform',
+  title: '로그인',
   description: 'GitHub 계정으로 로그인하세요',
+  robots: { index: false, follow: false },
 }
 
 export default async function LoginPage({

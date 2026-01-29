@@ -10,6 +10,7 @@ interface TagPageProps {
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const { slug } = await params
   const supabase = await createClient()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
   const { data: tag } = await supabase
     .from('tags')
@@ -18,12 +19,34 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
     .single()
 
   if (!tag) {
-    return { title: '태그를 찾을 수 없음 | Blog Platform' }
+    return {
+      title: '태그를 찾을 수 없음',
+      robots: { index: false },
+    }
   }
 
+  const title = `#${tag.name} 태그`
+  const description = `${tag.name} 태그가 달린 글 모음`
+  const canonicalUrl = `${siteUrl}/tags/${slug}`
+
   return {
-    title: `${tag.name} 태그 | Blog Platform`,
-    description: `${tag.name} 태그가 달린 글 목록`,
+    title,
+    description,
+    keywords: [tag.name],
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      url: canonicalUrl,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
   }
 }
 

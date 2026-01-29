@@ -4,8 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 import { PostCreateForm } from '@/components/post/post-create-form'
 
 export const metadata: Metadata = {
-  title: '새 글 작성 | Blog Platform',
+  title: '새 글 작성',
   description: '새로운 글을 작성하세요',
+  robots: { index: false, follow: false },
 }
 
 export default async function NewPostPage() {

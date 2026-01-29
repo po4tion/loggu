@@ -18,25 +18,66 @@ interface PostPageProps {
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params
   const supabase = await createClient()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
   const { data: post } = await supabase
     .from('posts')
-    .select('title, excerpt, cover_image_url')
+    .select(`
+      title,
+      excerpt,
+      cover_image_url,
+      published_at,
+      updated_at,
+      profiles!posts_author_id_fkey (
+        username,
+        display_name
+      )
+    `)
     .eq('slug', slug)
     .eq('published', true)
     .single()
 
   if (!post) {
-    return { title: '글을 찾을 수 없음 | Blog Platform' }
+    return {
+      title: '글을 찾을 수 없음',
+      robots: { index: false },
+    }
   }
 
+  const { data: postTags } = await supabase
+    .from('post_tags')
+    .select('tags(name)')
+    .eq('post_id', slug)
+
+  const author = post.profiles as unknown as { username: string; display_name: string | null }
+  const authorName = author?.display_name || author?.username || 'Unknown'
+  const description = post.excerpt || post.title
+  const canonicalUrl = `${siteUrl}/posts/${slug}`
+  const keywords = postTags?.map((pt) => (pt.tags as unknown as { name: string })?.name).filter(Boolean) || []
+
   return {
-    title: `${post.title} | Blog Platform`,
-    description: post.excerpt || post.title,
+    title: post.title,
+    description,
+    keywords,
+    authors: [{ name: authorName }],
     openGraph: {
+      type: 'article',
       title: post.title,
-      description: post.excerpt || post.title,
+      description,
+      url: canonicalUrl,
+      images: post.cover_image_url ? [{ url: post.cover_image_url, alt: post.title }] : undefined,
+      publishedTime: post.published_at || undefined,
+      modifiedTime: post.updated_at || undefined,
+      authors: [authorName],
+    },
+    twitter: {
+      card: post.cover_image_url ? 'summary_large_image' : 'summary',
+      title: post.title,
+      description,
       images: post.cover_image_url ? [post.cover_image_url] : undefined,
+    },
+    alternates: {
+      canonical: canonicalUrl,
     },
   }
 }

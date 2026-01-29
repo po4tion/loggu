@@ -18,11 +18,15 @@ export async function generateMetadata({ params }: EditPostPageProps): Promise<M
     .single()
 
   if (!post) {
-    return { title: '글을 찾을 수 없음 | Blog Platform' }
+    return {
+      title: '글을 찾을 수 없음',
+      robots: { index: false },
+    }
   }
 
   return {
-    title: `수정: ${post.title} | Blog Platform`,
+    title: `수정: ${post.title}`,
+    robots: { index: false, follow: false },
   }
 }
 

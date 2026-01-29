@@ -4,8 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 import { ProfileEditForm } from '@/components/profile/profile-edit-form'
 
 export const metadata: Metadata = {
-  title: '프로필 설정 | Blog Platform',
+  title: '프로필 설정',
   description: '프로필 정보를 수정하세요',
+  robots: { index: false, follow: false },
 }
 
 export default async function ProfileSettingsPage() {
