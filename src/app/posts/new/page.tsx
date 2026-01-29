@@ -20,7 +20,7 @@ export default async function NewPostPage() {
   }
 
   return (
-    <main className="container mx-auto max-w-4xl py-10">
+    <main className="container mx-auto max-w-4xl px-6 py-8 md:py-10">
       <header className="mb-8">
         <h1 className="text-2xl font-bold">새 글 작성</h1>
       </header>

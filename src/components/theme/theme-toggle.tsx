@@ -11,15 +11,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  size?: 'default' | 'lg'
+}
+
+export function ThemeToggle({ size = 'default' }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme()
+
+  const buttonSize = size === 'lg' ? 'size-11' : ''
+  const iconSize = size === 'lg' ? 'size-6' : 'h-5 w-5'
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="테마 변경">
-          <Sun className="h-5 w-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-          <Moon className="absolute h-5 w-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+        <Button variant="ghost" size="icon" className={buttonSize} aria-label="테마 변경">
+          <Sun className={`${iconSize} scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90`} />
+          <Moon className={`absolute ${iconSize} scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0`} />
           <span className="sr-only">테마 변경</span>
         </Button>
       </DropdownMenuTrigger>

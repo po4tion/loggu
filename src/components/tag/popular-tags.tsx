@@ -1,14 +1,12 @@
-import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
+import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 export async function PopularTags() {
   const supabase = await createClient()
 
   // 태그별 사용 횟수를 계산하여 인기 태그 조회
-  const { data: tagCounts } = await supabase
-    .from('post_tags')
-    .select('tag_id, tags(name, slug)')
+  const { data: tagCounts } = await supabase.from('post_tags').select('tag_id, tags(name, slug)')
 
   if (!tagCounts || tagCounts.length === 0) {
     return null
@@ -48,9 +46,9 @@ export async function PopularTags() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             href={`/tags/${tag.slug}` as any}
           >
-            <Badge variant="outline" className="hover:bg-secondary">
+            <Badge variant="outline" className="hover:bg-secondary px-3 py-1.5 text-sm">
               {tag.name}
-              <span className="ml-1 text-muted-foreground">({tag.count})</span>
+              <span className="text-muted-foreground ml-1">({tag.count})</span>
             </Badge>
           </Link>
         ))}

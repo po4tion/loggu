@@ -8,6 +8,7 @@ import { ko } from 'date-fns/locale'
 import { createClient } from '@/lib/supabase/client'
 import { commentSchema, type CommentFormData } from '@/lib/validations/comment'
 import type { CommentWithAuthor, Profile } from '@/types'
+import { MessageSquare, Pencil } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -35,7 +36,6 @@ export function CommentItem({
   onUpdate,
 }: CommentItemProps) {
   const [isEditing, setIsEditing] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
 
   const isAuthor = currentUser?.id === comment.author_id
@@ -52,25 +52,6 @@ export function CommentItem({
       content: comment.content,
     },
   })
-
-  const handleDelete = async () => {
-    if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
-      return
-    }
-
-    setIsDeleting(true)
-    const supabase = createClient()
-    const { error } = await supabase.from('comments').delete().eq('id', comment.id)
-
-    setIsDeleting(false)
-
-    if (error) {
-      alert('삭제에 실패했습니다')
-      return
-    }
-
-    onUpdate()
-  }
 
   const handleEditSubmit = async (data: CommentFormData) => {
     setIsUpdating(true)
@@ -107,7 +88,7 @@ export function CommentItem({
 
         <div className="flex-1 space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">{displayName}</span>
+            <span className="text-sm font-medium text-heading">{displayName}</span>
             <span className="text-xs text-muted-foreground">{timeAgo}</span>
           </div>
 
@@ -143,32 +124,28 @@ export function CommentItem({
             </Form>
           ) : (
             <>
-              <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
+              <p className="text-sm whitespace-pre-wrap text-content">{comment.content}</p>
 
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 {!isReply && currentUser && (
-                  <Button variant="ghost" size="xs" onClick={onReplyClick}>
-                    답글
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={onReplyClick}
+                    aria-label="답글"
+                  >
+                    <MessageSquare className="size-4" />
                   </Button>
                 )}
                 {isAuthor && (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      onClick={() => setIsEditing(true)}
-                    >
-                      수정
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      onClick={handleDelete}
-                      disabled={isDeleting}
-                    >
-                      {isDeleting ? '삭제 중...' : '삭제'}
-                    </Button>
-                  </>
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={() => setIsEditing(true)}
+                    aria-label="수정"
+                  >
+                    <Pencil className="size-4" />
+                  </Button>
                 )}
               </div>
             </>

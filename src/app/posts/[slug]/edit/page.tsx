@@ -65,7 +65,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   const tags = postTags?.map((pt) => (pt.tags as unknown as { name: string }).name) || []
 
   return (
-    <main className="container mx-auto max-w-4xl py-10">
+    <main className="container mx-auto max-w-4xl px-6 py-8 md:py-10">
       <h1 className="mb-8 text-3xl font-bold">글 수정</h1>
       <PostEditForm
         post={{

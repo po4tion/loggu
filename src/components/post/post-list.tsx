@@ -154,7 +154,7 @@ export function PostList({
               author_username: post.author_username,
               author_display_name: post.author_display_name,
               author_avatar_url: post.author_avatar_url,
-              likes_count: Number(post.likes_count),
+              reading_time_minutes: post.reading_time_minutes,
             }}
           />
         ))}

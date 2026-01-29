@@ -95,7 +95,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const { data: posts } = await postsQuery
 
   return (
-    <main className="container mx-auto max-w-4xl py-10">
+    <main className="container mx-auto max-w-4xl px-6 py-8 md:py-10">
       <article className="flex flex-col items-center text-center">
         <Avatar className="h-32 w-32">
           <AvatarImage src={profile.avatar_url ?? undefined} alt={displayName} />

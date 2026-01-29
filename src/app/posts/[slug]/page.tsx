@@ -8,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { PostContent } from '@/components/post/post-content'
 import { PostActions } from '@/components/post/post-actions'
-import { LikeButton } from '@/components/post/like-button'
 import { CommentList } from '@/components/comment/comment-list'
 import { TableOfContents } from '@/components/post/table-of-contents'
 
@@ -100,6 +99,7 @@ export default async function PostPage({ params }: PostPageProps) {
       published,
       published_at,
       views,
+      reading_time_minutes,
       author_id,
       profiles!posts_author_id_fkey (
         id,
@@ -177,23 +177,6 @@ export default async function PostPage({ params }: PostPageProps) {
     currentUserProfile = profileData
   }
 
-  // Fetch like count and user's like status
-  const { count: likesCount } = await supabase
-    .from('likes')
-    .select('*', { count: 'exact', head: true })
-    .eq('post_id', post.id)
-
-  let isLikedByUser = false
-  if (user) {
-    const { data: likeData } = await supabase
-      .from('likes')
-      .select('user_id')
-      .eq('post_id', post.id)
-      .eq('user_id', user.id)
-      .single()
-    isLikedByUser = !!likeData
-  }
-
   // Fetch tags
   const { data: postTags } = await supabase
     .from('post_tags')
@@ -221,9 +204,45 @@ export default async function PostPage({ params }: PostPageProps) {
     : null
 
   return (
-    <main className="container mx-auto py-10">
+    <main className="container mx-auto px-6 py-8 md:py-10">
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_200px] gap-8 max-w-6xl mx-auto">
         <article className="max-w-4xl">
+          <header className="mb-8">
+            {!post.published && (
+              <span className="mb-2 inline-block rounded bg-yellow-100 px-2 py-1 text-sm text-yellow-800">
+                임시저장
+              </span>
+            )}
+            <h1 className="text-2xl md:text-4xl leading-tight font-bold text-heading">{post.title}</h1>
+            {post.excerpt && (
+              <p className="mt-3 text-subtle text-base md:text-lg">{post.excerpt}</p>
+            )}
+
+            <div className="mt-6 flex items-center justify-between">
+              <Link
+                href={`/profile/${author.username}`}
+                className="flex items-center gap-3 hover:opacity-80"
+              >
+                <Avatar>
+                  <AvatarImage src={author.avatar_url ?? undefined} alt={displayName} />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium text-heading">{displayName}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {publishedDate && <span>{publishedDate}</span>}
+                    {post.reading_time_minutes && (
+                      <span> · {post.reading_time_minutes}분</span>
+                    )}
+                    {post.views > 0 && <span> · 조회 {post.views}</span>}
+                  </p>
+                </div>
+              </Link>
+
+              {isAuthor && <PostActions postId={post.id} slug={post.slug} />}
+            </div>
+          </header>
+
           {post.cover_image_url && (
             <div className="relative mb-8 aspect-video overflow-hidden rounded-lg">
               <Image
@@ -236,61 +255,23 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           )}
 
-          <header className="mb-8">
-            {!post.published && (
-              <span className="mb-2 inline-block rounded bg-yellow-100 px-2 py-1 text-sm text-yellow-800">
-                임시저장
-              </span>
-            )}
-            <h1 className="text-4xl leading-tight font-bold">{post.title}</h1>
-
-            <div className="mt-6 flex items-center justify-between">
-              <Link
-                href={`/profile/${author.username}`}
-                className="flex items-center gap-3 hover:opacity-80"
-              >
-                <Avatar>
-                  <AvatarImage src={author.avatar_url ?? undefined} alt={displayName} />
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">{displayName}</p>
-                  <p className="text-muted-foreground text-sm">
-                    {publishedDate && <span>{publishedDate}</span>}
-                    {publishedDate && post.views > 0 && <span> · </span>}
-                    {post.views > 0 && <span>조회 {post.views}</span>}
-                  </p>
-                </div>
-              </Link>
-
-              {isAuthor && <PostActions postId={post.id} slug={post.slug} />}
-            </div>
-          </header>
-
-          <PostContent content={post.content} />
-
-          {post.published && (
-            <div className="mt-8 flex flex-wrap items-center gap-4 border-t pt-6">
-              <LikeButton
-                postId={post.id}
-                initialLiked={isLikedByUser}
-                initialCount={likesCount ?? 0}
-                isAuthenticated={!!user}
-              />
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    <Link key={tag.slug} href={`/tags/${tag.slug}` as any}>
-                      <Badge variant="secondary" className="hover:bg-secondary/80">
-                        {tag.name}
-                      </Badge>
-                    </Link>
-                  ))}
-                </div>
-              )}
+          {tags.length > 0 && (
+            <div className="mb-8">
+              <p className="text-xs text-subtle uppercase tracking-wide mb-3">Tags</p>
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  <Link key={tag.slug} href={`/tags/${tag.slug}` as any}>
+                    <Badge variant="outline" className="hover:bg-secondary/80 py-[4px] px-[12px] text-[14px] text-subtle">
+                      #{tag.name}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
+
+          <PostContent content={post.content} />
 
           {post.published && (
             <CommentList

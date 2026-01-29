@@ -75,7 +75,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   })
 
   return (
-    <main className="container mx-auto py-10">
+    <main className="container mx-auto px-6 py-8 md:py-10">
       <PopularTags />
 
       <SearchFilters />

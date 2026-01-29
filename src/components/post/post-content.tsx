@@ -93,7 +93,7 @@ export function PostContent({ content }: PostContentProps) {
 
   return (
     <div
-      className="prose prose-neutral dark:prose-invert max-w-none [&_pre]:bg-[#0d1117] [&_pre]:p-4 [&_pre]:rounded-lg [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-lg"
+      className="prose prose-neutral dark:prose-invert max-w-none text-content [&_pre]:bg-[#0d1117] [&_pre]:p-4 [&_pre]:rounded-lg [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-lg"
       dangerouslySetInnerHTML={{ __html: sanitizedContent }}
     />
   )

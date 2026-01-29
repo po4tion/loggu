@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { Route } from 'next'
+import { Loader2, Pencil, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 
@@ -37,12 +38,24 @@ export function PostActions({ postId, slug }: PostActionsProps) {
   }
 
   return (
-    <div className="flex gap-2">
-      <Button asChild variant="outline" size="sm">
-        <Link href={editUrl}>수정</Link>
+    <div className="flex gap-1">
+      <Button asChild variant="ghost" size="icon" aria-label="수정">
+        <Link href={editUrl}>
+          <Pencil className="size-5" />
+        </Link>
       </Button>
-      <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isDeleting}>
-        {isDeleting ? '삭제 중...' : '삭제'}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleDelete}
+        disabled={isDeleting}
+        aria-label="삭제"
+      >
+        {isDeleting ? (
+          <Loader2 className="size-5 animate-spin" />
+        ) : (
+          <Trash2 className="size-5 text-destructive" />
+        )}
       </Button>
     </div>
   )

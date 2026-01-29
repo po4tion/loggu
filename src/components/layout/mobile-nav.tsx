@@ -47,11 +47,11 @@ export function MobileNav({ user, profile }: MobileNavProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="md:hidden"
+        className="size-11 md:hidden"
         onClick={() => setOpen(true)}
         aria-label="메뉴 열기"
       >
-        <MenuIcon className="h-5 w-5" />
+        <MenuIcon className="size-6" />
       </Button>
 
       <SheetContent side="left" className="w-72">
@@ -139,7 +139,7 @@ export function MobileNav({ user, profile }: MobileNavProps) {
         <div className="mt-auto border-t p-4">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground text-sm">테마</span>
-            <ThemeToggle />
+            <ThemeToggle size="lg" />
           </div>
         </div>
       </SheetContent>

@@ -109,42 +109,31 @@ export default async function TagPage({ params }: TagPageProps) {
     })
     .filter((post) => post.published)
 
-  // 좋아요 수 조회
-  const postsWithLikes = await Promise.all(
-    posts.map(async (post) => {
-      const { count } = await supabase
-        .from('likes')
-        .select('*', { count: 'exact', head: true })
-        .eq('post_id', post.id)
-
-      return {
-        id: post.id,
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        cover_image_url: post.cover_image_url,
-        published_at: post.published_at,
-        views: post.views,
-        author_username: post.profiles.username,
-        author_display_name: post.profiles.display_name,
-        author_avatar_url: post.profiles.avatar_url,
-        likes_count: count ?? 0,
-      }
-    })
-  )
+  const postsForCard = posts.map((post) => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    cover_image_url: post.cover_image_url,
+    published_at: post.published_at,
+    views: post.views,
+    author_username: post.profiles.username,
+    author_display_name: post.profiles.display_name,
+    author_avatar_url: post.profiles.avatar_url,
+  }))
 
   return (
-    <main className="container mx-auto py-10">
+    <main className="container mx-auto px-6 py-8 md:py-10">
       <header className="mb-8">
         <h1 className="text-3xl font-bold">#{tag.name}</h1>
         <p className="text-muted-foreground mt-2">
-          {postsWithLikes.length}개의 글
+          {postsForCard.length}개의 글
         </p>
       </header>
 
-      {postsWithLikes.length > 0 ? (
+      {postsForCard.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {postsWithLikes.map((post) => (
+          {postsForCard.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>

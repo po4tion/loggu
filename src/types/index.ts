@@ -68,13 +68,6 @@ export interface CommentWithReplies extends CommentWithAuthor {
   replies: CommentWithAuthor[]
 }
 
-// Like types
-export interface Like {
-  user_id: string
-  post_id: string
-  created_at: string
-}
-
 // RPC function return types
 export interface PostWithTagsRpcResult {
   id: string
@@ -87,8 +80,8 @@ export interface PostWithTagsRpcResult {
   author_username: string
   author_display_name: string | null
   author_avatar_url: string | null
-  likes_count: number
   tags: string | null // JSON string of tag names
+  reading_time_minutes: number
 }
 
 // API Response types

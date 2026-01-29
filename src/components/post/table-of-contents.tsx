@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, startTransition } from 'react'
 
 interface TocItem {
   id: string
@@ -14,31 +14,26 @@ interface TableOfContentsProps {
 
 export function TableOfContents({ content }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('')
+  const [items, setItems] = useState<TocItem[]>([])
 
-  // useMemo로 items 계산 (렌더링 중에 동기적으로)
-  const items = useMemo(() => {
-    if (typeof window === 'undefined') return []
-
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(content, 'text/html')
-    const headings = doc.querySelectorAll('h1, h2, h3')
+  useEffect(() => {
+    // DOM에서 실제 헤딩에 id 부여하고 TOC 아이템 수집
+    const headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3')
 
     const tocItems: TocItem[] = []
     headings.forEach((heading, index) => {
-      const text = heading.textContent || ''
       const id = `heading-${index}`
-      const level = parseInt(heading.tagName[1])
-      tocItems.push({ id, text, level })
+      heading.id = id
+      tocItems.push({
+        id,
+        text: heading.textContent || '',
+        level: parseInt(heading.tagName[1]),
+      })
     })
 
-    return tocItems
-  }, [content])
-
-  useEffect(() => {
-    // DOM에서 실제 헤딩에 id 부여
-    const headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3')
-    headings.forEach((heading, index) => {
-      heading.id = `heading-${index}`
+    // startTransition으로 non-urgent 업데이트 처리
+    startTransition(() => {
+      setItems(tocItems)
     })
 
     // 스크롤 이벤트로 현재 활성 헤딩 추적
@@ -56,7 +51,7 @@ export function TableOfContents({ content }: TableOfContentsProps) {
     headings.forEach((heading) => observer.observe(heading))
 
     return () => observer.disconnect()
-  }, [items])
+  }, [content])
 
   if (items.length === 0) {
     return null
