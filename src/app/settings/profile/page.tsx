@@ -29,7 +29,7 @@ export default async function ProfileSettingsPage() {
   }
 
   return (
-    <main className="container max-w-2xl py-10">
+    <main className="container mx-auto max-w-2xl py-10">
       <header className="mb-8">
         <h1 className="text-2xl font-bold">프로필 설정</h1>
         <p className="text-muted-foreground mt-1">프로필 정보를 수정하세요</p>

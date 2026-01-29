@@ -21,7 +21,7 @@ export async function Header() {
 
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
-      <nav className="container flex h-14 items-center justify-between">
+      <nav className="container mx-auto flex h-14 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold">Blog Platform</span>
         </Link>

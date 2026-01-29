@@ -53,7 +53,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   }
 
   return (
-    <main className="container max-w-4xl py-10">
+    <main className="container mx-auto max-w-4xl py-10">
       <h1 className="mb-8 text-3xl font-bold">글 수정</h1>
       <PostEditForm
         post={{

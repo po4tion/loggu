@@ -64,6 +64,10 @@ export interface CommentWithAuthor extends Comment {
   author: Profile
 }
 
+export interface CommentWithReplies extends CommentWithAuthor {
+  replies: CommentWithAuthor[]
+}
+
 // Like types
 export interface Like {
   user_id: string

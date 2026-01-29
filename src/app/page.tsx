@@ -11,7 +11,7 @@ export default async function HomePage() {
   })
 
   return (
-    <main className="container py-10">
+    <main className="container mx-auto py-10">
       <section>
         <h1 className="sr-only">최신 글</h1>
 

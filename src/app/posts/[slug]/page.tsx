@@ -3,9 +3,11 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
+import type { CommentWithAuthor, Profile } from '@/types'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PostContent } from '@/components/post/post-content'
 import { PostActions } from '@/components/post/post-actions'
+import { CommentList } from '@/components/comment/comment-list'
 
 interface PostPageProps {
   params: Promise<{ slug: string }>
@@ -86,6 +88,51 @@ export default async function PostPage({ params }: PostPageProps) {
     await supabase.rpc('increment_post_views', { post_id: post.id })
   }
 
+  // Fetch comments with author profiles
+  const { data: commentsData } = await supabase
+    .from('comments')
+    .select(
+      `
+      id,
+      post_id,
+      author_id,
+      parent_id,
+      content,
+      created_at,
+      updated_at,
+      profiles!comments_author_id_fkey (
+        id,
+        username,
+        display_name,
+        avatar_url
+      )
+    `
+    )
+    .eq('post_id', post.id)
+    .order('created_at', { ascending: true })
+
+  const comments: CommentWithAuthor[] = (commentsData ?? []).map((comment) => ({
+    id: comment.id,
+    post_id: comment.post_id,
+    author_id: comment.author_id,
+    parent_id: comment.parent_id,
+    content: comment.content,
+    created_at: comment.created_at,
+    updated_at: comment.updated_at,
+    author: comment.profiles as unknown as Profile,
+  }))
+
+  // Fetch current user profile if logged in
+  let currentUserProfile: Profile | null = null
+  if (user) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('id, username, display_name, bio, avatar_url, created_at, updated_at')
+      .eq('id', user.id)
+      .single()
+    currentUserProfile = profileData
+  }
+
   const author = post.profiles as unknown as {
     id: string
     username: string
@@ -104,7 +151,7 @@ export default async function PostPage({ params }: PostPageProps) {
     : null
 
   return (
-    <main className="container max-w-4xl py-10">
+    <main className="container mx-auto max-w-4xl py-10">
       <article>
         {post.cover_image_url && (
           <div className="relative mb-8 aspect-video overflow-hidden rounded-lg">
@@ -151,6 +198,14 @@ export default async function PostPage({ params }: PostPageProps) {
 
         <PostContent content={post.content} />
       </article>
+
+      {post.published && (
+        <CommentList
+          postId={post.id}
+          initialComments={comments}
+          currentUser={currentUserProfile}
+        />
+      )}
     </main>
   )
 }
