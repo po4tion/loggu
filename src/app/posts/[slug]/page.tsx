@@ -10,6 +10,7 @@ import { PostContent } from '@/components/post/post-content'
 import { PostActions } from '@/components/post/post-actions'
 import { LikeButton } from '@/components/post/like-button'
 import { CommentList } from '@/components/comment/comment-list'
+import { TableOfContents } from '@/components/post/table-of-contents'
 
 interface PostPageProps {
   params: Promise<{ slug: string }>
@@ -220,83 +221,89 @@ export default async function PostPage({ params }: PostPageProps) {
     : null
 
   return (
-    <main className="container mx-auto max-w-4xl py-10">
-      <article>
-        {post.cover_image_url && (
-          <div className="relative mb-8 aspect-video overflow-hidden rounded-lg">
-            <Image
-              src={post.cover_image_url}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
-
-        <header className="mb-8">
-          {!post.published && (
-            <span className="mb-2 inline-block rounded bg-yellow-100 px-2 py-1 text-sm text-yellow-800">
-              임시저장
-            </span>
+    <main className="container mx-auto py-10">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_200px] gap-8 max-w-6xl mx-auto">
+        <article className="max-w-4xl">
+          {post.cover_image_url && (
+            <div className="relative mb-8 aspect-video overflow-hidden rounded-lg">
+              <Image
+                src={post.cover_image_url}
+                alt={post.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
           )}
-          <h1 className="text-4xl leading-tight font-bold">{post.title}</h1>
 
-          <div className="mt-6 flex items-center justify-between">
-            <Link
-              href={`/profile/${author.username}`}
-              className="flex items-center gap-3 hover:opacity-80"
-            >
-              <Avatar>
-                <AvatarImage src={author.avatar_url ?? undefined} alt={displayName} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{displayName}</p>
-                <p className="text-muted-foreground text-sm">
-                  {publishedDate && <span>{publishedDate}</span>}
-                  {publishedDate && post.views > 0 && <span> · </span>}
-                  {post.views > 0 && <span>조회 {post.views}</span>}
-                </p>
-              </div>
-            </Link>
-
-            {isAuthor && <PostActions postId={post.id} slug={post.slug} />}
-          </div>
-        </header>
-
-        <PostContent content={post.content} />
-
-        {post.published && (
-          <div className="mt-8 flex flex-wrap items-center gap-4 border-t pt-6">
-            <LikeButton
-              postId={post.id}
-              initialLiked={isLikedByUser}
-              initialCount={likesCount ?? 0}
-              isAuthenticated={!!user}
-            />
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  <Link key={tag.slug} href={`/tags/${tag.slug}` as any}>
-                    <Badge variant="secondary" className="hover:bg-secondary/80">
-                      {tag.name}
-                    </Badge>
-                  </Link>
-                ))}
-              </div>
+          <header className="mb-8">
+            {!post.published && (
+              <span className="mb-2 inline-block rounded bg-yellow-100 px-2 py-1 text-sm text-yellow-800">
+                임시저장
+              </span>
             )}
-          </div>
-        )}
-      </article>
+            <h1 className="text-4xl leading-tight font-bold">{post.title}</h1>
+
+            <div className="mt-6 flex items-center justify-between">
+              <Link
+                href={`/profile/${author.username}`}
+                className="flex items-center gap-3 hover:opacity-80"
+              >
+                <Avatar>
+                  <AvatarImage src={author.avatar_url ?? undefined} alt={displayName} />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{displayName}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {publishedDate && <span>{publishedDate}</span>}
+                    {publishedDate && post.views > 0 && <span> · </span>}
+                    {post.views > 0 && <span>조회 {post.views}</span>}
+                  </p>
+                </div>
+              </Link>
+
+              {isAuthor && <PostActions postId={post.id} slug={post.slug} />}
+            </div>
+          </header>
+
+          <PostContent content={post.content} />
+
+          {post.published && (
+            <div className="mt-8 flex flex-wrap items-center gap-4 border-t pt-6">
+              <LikeButton
+                postId={post.id}
+                initialLiked={isLikedByUser}
+                initialCount={likesCount ?? 0}
+                isAuthenticated={!!user}
+              />
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    <Link key={tag.slug} href={`/tags/${tag.slug}` as any}>
+                      <Badge variant="secondary" className="hover:bg-secondary/80">
+                        {tag.name}
+                      </Badge>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </article>
+
+        {post.content && <TableOfContents content={post.content} />}
+      </div>
 
       {post.published && (
-        <CommentList
-          postId={post.id}
-          initialComments={comments}
-          currentUser={currentUserProfile}
-        />
+        <div className="max-w-4xl mx-auto">
+          <CommentList
+            postId={post.id}
+            initialComments={comments}
+            currentUser={currentUserProfile}
+          />
+        </div>
       )}
     </main>
   )
