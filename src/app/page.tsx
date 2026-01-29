@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { PostCard } from '@/components/post/post-card'
+import { PopularTags } from '@/components/tag/popular-tags'
 import type { PostWithTagsRpcResult } from '@/types'
 
 export default async function HomePage() {
@@ -12,6 +13,8 @@ export default async function HomePage() {
 
   return (
     <main className="container mx-auto py-10">
+      <PopularTags />
+
       <section>
         <h1 className="sr-only">최신 글</h1>
 

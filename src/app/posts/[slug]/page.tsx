@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import type { CommentWithAuthor, Profile } from '@/types'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { PostContent } from '@/components/post/post-content'
 import { PostActions } from '@/components/post/post-actions'
 import { LikeButton } from '@/components/post/like-button'
@@ -151,6 +152,14 @@ export default async function PostPage({ params }: PostPageProps) {
     isLikedByUser = !!likeData
   }
 
+  // Fetch tags
+  const { data: postTags } = await supabase
+    .from('post_tags')
+    .select('tags(name, slug)')
+    .eq('post_id', post.id)
+
+  const tags = postTags?.map((pt) => pt.tags as { name: string; slug: string }) || []
+
   const author = post.profiles as unknown as {
     id: string
     username: string
@@ -217,13 +226,24 @@ export default async function PostPage({ params }: PostPageProps) {
         <PostContent content={post.content} />
 
         {post.published && (
-          <div className="mt-8 flex items-center gap-4 border-t pt-6">
+          <div className="mt-8 flex flex-wrap items-center gap-4 border-t pt-6">
             <LikeButton
               postId={post.id}
               initialLiked={isLikedByUser}
               initialCount={likesCount ?? 0}
               isAuthenticated={!!user}
             />
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <Link key={tag.slug} href={`/tags/${tag.slug}`}>
+                    <Badge variant="secondary" className="hover:bg-secondary/80">
+                      {tag.name}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </article>

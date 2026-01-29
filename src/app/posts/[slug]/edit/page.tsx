@@ -52,6 +52,14 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
     redirect(`/posts/${slug}`)
   }
 
+  // 기존 태그 불러오기
+  const { data: postTags } = await supabase
+    .from('post_tags')
+    .select('tags(name)')
+    .eq('post_id', post.id)
+
+  const tags = postTags?.map((pt) => (pt.tags as { name: string }).name) || []
+
   return (
     <main className="container mx-auto max-w-4xl py-10">
       <h1 className="mb-8 text-3xl font-bold">글 수정</h1>
@@ -64,6 +72,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
           excerpt: post.excerpt,
           cover_image_url: post.cover_image_url,
           published: post.published,
+          tags,
         }}
       />
     </main>

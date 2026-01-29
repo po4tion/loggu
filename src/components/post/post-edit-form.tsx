@@ -4,12 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import slugify from 'slugify'
 import { createClient } from '@/lib/supabase/client'
 import { postSchema, type PostFormData } from '@/lib/validations/post'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { TiptapEditor } from '@/components/editor/tiptap-editor'
+import { TagInput } from '@/components/post/tag-input'
 
 interface PostEditFormProps {
   post: {
@@ -20,6 +22,7 @@ interface PostEditFormProps {
     excerpt: string | null
     cover_image_url: string | null
     published: boolean
+    tags: string[]
   }
 }
 
@@ -40,7 +43,7 @@ export function PostEditForm({ post }: PostEditFormProps) {
       content: post.content || '',
       excerpt: post.excerpt || '',
       cover_image_url: post.cover_image_url || '',
-      tags: [],
+      tags: post.tags || [],
     },
   })
 
@@ -61,12 +64,68 @@ export function PostEditForm({ post }: PostEditFormProps) {
       })
       .eq('id', post.id)
 
-    setIsLoading(false)
-
     if (error) {
+      setIsLoading(false)
       setMessage({ type: 'error', text: '글 수정에 실패했습니다' })
       return
     }
+
+    // 기존 태그 연결 삭제
+    const { error: deleteError } = await supabase
+      .from('post_tags')
+      .delete()
+      .eq('post_id', post.id)
+
+    if (deleteError) {
+      console.error('태그 삭제 실패:', deleteError)
+    }
+
+    // 새 태그 처리
+    if (data.tags && data.tags.length > 0) {
+      for (const tagName of data.tags) {
+        // slug 생성: slugify 결과가 빈 문자열이면 base64 인코딩 사용
+        let tagSlug = slugify(tagName, { lower: true, strict: true })
+        if (!tagSlug) {
+          tagSlug = `tag-${btoa(encodeURIComponent(tagName)).replace(/[+/=]/g, '-').toLowerCase()}`
+        }
+
+        let tagId: string | undefined
+
+        // 먼저 INSERT 시도
+        const { data: newTag, error: insertTagError } = await supabase
+          .from('tags')
+          .insert({ name: tagName, slug: tagSlug })
+          .select('id')
+          .single()
+
+        if (insertTagError) {
+          if (insertTagError.code === '23505') {
+            // unique violation - 기존 태그 찾기 (전체 조회 후 클라이언트에서 필터)
+            const { data: allTags } = await supabase.from('tags').select('id, name')
+            const existingTag = allTags?.find((t) => t.name === tagName)
+            tagId = existingTag?.id
+          } else {
+            console.error('태그 생성 실패:', insertTagError)
+            continue
+          }
+        } else if (newTag) {
+          tagId = newTag.id
+        }
+
+        if (tagId) {
+          const { error: linkError } = await supabase.from('post_tags').insert({
+            post_id: post.id,
+            tag_id: tagId,
+          })
+
+          if (linkError) {
+            console.error('태그 연결 실패:', linkError)
+          }
+        }
+      }
+    }
+
+    setIsLoading(false)
 
     if (publish) {
       router.push(`/posts/${post.slug}`)
@@ -121,6 +180,17 @@ export function PostEditForm({ post }: PostEditFormProps) {
           {...register('excerpt')}
         />
         {errors.excerpt && <p className="text-destructive text-sm">{errors.excerpt.message}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label>태그 (선택)</Label>
+        <Controller
+          name="tags"
+          control={control}
+          render={({ field }) => (
+            <TagInput value={field.value || []} onChange={field.onChange} />
+          )}
+        />
       </div>
 
       {message && (
