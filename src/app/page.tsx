@@ -1,13 +1,32 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
-import { PostCard } from '@/components/post/post-card'
 import { PopularTags } from '@/components/tag/popular-tags'
+import { SearchFilters } from '@/components/search/search-filters'
+import { PostList } from '@/components/post/post-list'
 import type { PostWithTagsRpcResult } from '@/types'
 
-export default async function HomePage() {
+interface HomePageProps {
+  searchParams: Promise<{
+    q?: string
+    sort?: string
+    author?: string
+  }>
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const params = await searchParams
+  const searchQuery = params.q || ''
+  const sortBy = params.sort || 'latest'
+  const authorUsername = params.author || ''
+
   const supabase = await createClient()
 
-  const { data: posts } = await supabase.rpc('get_posts_with_tags', {
-    limit_count: 20,
+  // 초기 데이터 서버에서 fetch
+  const { data: initialPosts } = await supabase.rpc('search_posts', {
+    search_query: searchQuery || null,
+    author_username_filter: authorUsername || null,
+    sort_by: sortBy,
+    limit_count: 12,
     offset_count: 0,
   })
 
@@ -15,38 +34,38 @@ export default async function HomePage() {
     <main className="container mx-auto py-10">
       <PopularTags />
 
-      <section>
-        <h1 className="sr-only">최신 글</h1>
+      <SearchFilters />
 
-        {posts && posts.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post: PostWithTagsRpcResult) => (
-              <PostCard
-                key={post.id}
-                post={{
-                  id: post.id,
-                  title: post.title,
-                  slug: post.slug,
-                  excerpt: post.excerpt,
-                  cover_image_url: post.cover_image_url,
-                  published_at: post.published_at,
-                  views: post.views,
-                  author_username: post.author_username,
-                  author_display_name: post.author_display_name,
-                  author_avatar_url: post.author_avatar_url,
-                  likes_count: Number(post.likes_count),
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-muted-foreground text-lg">아직 작성된 글이 없습니다.</p>
-            <p className="text-muted-foreground mt-1 text-sm">
-              첫 번째 글을 작성해보세요!
-            </p>
-          </div>
+      <section>
+        <h1 className="sr-only">
+          {searchQuery ? `"${searchQuery}" 검색 결과` : '최신 글'}
+        </h1>
+
+        {searchQuery && (
+          <p className="text-muted-foreground mb-6 text-sm">
+            &quot;{searchQuery}&quot; 검색 결과
+          </p>
         )}
+
+        <Suspense
+          fallback={
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-muted h-[320px] animate-pulse rounded-lg"
+                />
+              ))}
+            </div>
+          }
+        >
+          <PostList
+            searchQuery={searchQuery}
+            authorUsername={authorUsername}
+            sortBy={sortBy}
+            initialPosts={(initialPosts as PostWithTagsRpcResult[]) || []}
+          />
+        </Suspense>
       </section>
     </main>
   )
