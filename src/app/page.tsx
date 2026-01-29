@@ -97,7 +97,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-muted h-[320px] animate-pulse rounded-lg"
+                  className="bg-muted h-80 animate-pulse rounded-lg"
                 />
               ))}
             </div>

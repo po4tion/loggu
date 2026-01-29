@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { useForm, useWatch, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import slugify from 'slugify'
 import { createClient } from '@/lib/supabase/client'
@@ -12,11 +13,31 @@ import { Label } from '@/components/ui/label'
 import { TiptapEditor } from '@/components/editor/tiptap-editor'
 import { TagInput } from '@/components/post/tag-input'
 
+// 컴포넌트 외부에 정의하여 React Compiler 호환성 확보
+function createSlug(title: string): string {
+  const baseSlug = slugify(title, {
+    lower: true,
+    strict: true,
+    locale: 'ko',
+  })
+  const timestamp = Date.now().toString(36)
+  return baseSlug ? `${baseSlug}-${timestamp}` : timestamp
+}
+
+function previewSlug(title: string): string {
+  return slugify(title, {
+    lower: true,
+    strict: true,
+    locale: 'ko',
+  }) || 'slug'
+}
+
 interface PostCreateFormProps {
   authorId: string
 }
 
 export function PostCreateForm({ authorId }: PostCreateFormProps) {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
@@ -24,7 +45,6 @@ export function PostCreateForm({ authorId }: PostCreateFormProps) {
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors },
   } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
@@ -37,24 +57,14 @@ export function PostCreateForm({ authorId }: PostCreateFormProps) {
     },
   })
 
-  const title = watch('title')
-
-  const generateSlug = (title: string): string => {
-    const baseSlug = slugify(title, {
-      lower: true,
-      strict: true,
-      locale: 'ko',
-    })
-    const timestamp = Date.now().toString(36)
-    return baseSlug ? `${baseSlug}-${timestamp}` : timestamp
-  }
+  const title = useWatch({ control, name: 'title' })
 
   const onSubmit = async (data: PostFormData, publish: boolean) => {
     setIsLoading(true)
     setMessage(null)
 
     const supabase = createClient()
-    const slug = generateSlug(data.title)
+    const slug = createSlug(data.title)
 
     const { data: post, error } = await supabase
       .from('posts')
@@ -120,7 +130,7 @@ export function PostCreateForm({ authorId }: PostCreateFormProps) {
     setIsLoading(false)
 
     if (publish) {
-      window.location.href = `/posts/${post.slug}`
+      router.push(`/posts/${post.slug}`)
     } else {
       setMessage({ type: 'success', text: '임시저장되었습니다' })
     }
@@ -150,7 +160,7 @@ export function PostCreateForm({ authorId }: PostCreateFormProps) {
           {...register('title')}
         />
         {errors.title && <p className="text-destructive text-sm">{errors.title.message}</p>}
-        {title && <p className="text-muted-foreground text-xs">슬러그: {generateSlug(title)}</p>}
+        {title && <p className="text-muted-foreground text-xs">슬러그: {previewSlug(title)}-xxx</p>}
       </div>
 
       <div className="space-y-2">

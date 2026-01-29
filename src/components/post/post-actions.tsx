@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { Route } from 'next'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -12,6 +13,7 @@ interface PostActionsProps {
 }
 
 export function PostActions({ postId, slug }: PostActionsProps) {
+  const router = useRouter()
   const editUrl = `/posts/${slug}/edit` as Route
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -31,7 +33,7 @@ export function PostActions({ postId, slug }: PostActionsProps) {
       return
     }
 
-    window.location.href = '/'
+    router.push('/')
   }
 
   return (
