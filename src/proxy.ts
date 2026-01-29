@@ -1,7 +1,17 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // /@username → /profile/username 리라이트
+  if (pathname.startsWith('/@')) {
+    const username = pathname.slice(2)
+    const url = request.nextUrl.clone()
+    url.pathname = `/profile/${username}`
+    return NextResponse.rewrite(url)
+  }
+
   return await updateSession(request)
 }
 
