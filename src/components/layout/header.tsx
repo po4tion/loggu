@@ -34,7 +34,6 @@ export async function Header() {
   }
 
   const displayProfile = profile || ownerProfile
-  const homeLink = displayProfile ? `/@${displayProfile.username}` : '/'
   const displayName = displayProfile?.display_name || displayProfile?.username || 'Blog'
   const initials = displayName.slice(0, 2).toUpperCase()
 
@@ -45,24 +44,18 @@ export async function Header() {
           <MobileNav user={user} profile={profile} ownerProfile={ownerProfile} />
 
           {/* 로고 영역: 아바타 + 타이틀 */}
-          <div className="flex items-center gap-2">
-            {user && profile ? (
-              // 로그인 상태: 드롭다운 메뉴가 있는 아바타
-              <UserMenu user={user} profile={profile} />
-            ) : (
-              // 비로그인 상태: 클릭 시 로그인 페이지로
+          {user && profile ? (
+            // 로그인 상태: 아바타 + 타이틀 클릭 시 드롭다운
+            <UserMenu user={user} profile={profile} showTitle />
+          ) : (
+            // 비로그인 상태: 아바타 → 로그인, 타이틀 → 홈
+            <div className="flex items-center gap-2">
               <Link href="/login" className="transition-opacity hover:opacity-80">
                 <Avatar className="h-9 w-9 ring-2 ring-transparent transition-all hover:ring-border/50">
                   <AvatarImage src={displayProfile?.avatar_url ?? undefined} alt={displayName} />
                   <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
                 </Avatar>
               </Link>
-            )}
-            {user && profile ? (
-              <span className="hidden text-lg font-semibold tracking-tight text-heading sm:inline-block">
-                Blog Platform
-              </span>
-            ) : (
               <Link
                 href="/"
                 className="transition-opacity hover:opacity-80"
@@ -71,8 +64,8 @@ export async function Header() {
                   Blog Platform
                 </span>
               </Link>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Mobile actions */}

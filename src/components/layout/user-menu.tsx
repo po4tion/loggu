@@ -23,9 +23,10 @@ interface UserMenuProps {
     avatar_url: string | null
   }
   className?: string
+  showTitle?: boolean
 }
 
-export function UserMenu({ user, profile, className }: UserMenuProps) {
+export function UserMenu({ user, profile, className, showTitle = false }: UserMenuProps) {
   const router = useRouter()
 
   const handleLogout = async () => {
@@ -44,12 +45,17 @@ export function UserMenu({ user, profile, className }: UserMenuProps) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className={`relative h-9 w-9 rounded-full ring-2 ring-transparent transition-all hover:ring-border/50 ${className || ''}`}
+          className={`relative transition-all ${showTitle ? 'h-9 gap-2 rounded-lg px-2 hover:bg-accent' : 'h-9 w-9 rounded-full ring-2 ring-transparent hover:ring-border/50'} ${className || ''}`}
         >
           <Avatar className="h-9 w-9">
             <AvatarImage src={avatarUrl ?? undefined} alt={displayName} />
             <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
           </Avatar>
+          {showTitle && (
+            <span className="hidden text-lg font-semibold tracking-tight text-heading sm:inline-block">
+              Blog Platform
+            </span>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 p-2" align="end" forceMount>
