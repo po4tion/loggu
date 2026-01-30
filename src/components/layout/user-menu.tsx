@@ -50,7 +50,7 @@ export function UserMenu({ user, profile, className, showTitle = false }: UserMe
             <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
           </Avatar>
           {showTitle && (
-            <span className="hidden text-lg font-semibold tracking-tight text-heading transition-opacity hover:opacity-80 sm:inline-block">
+            <span className="hidden items-center text-lg font-semibold tracking-tight text-heading transition-opacity hover:opacity-80 sm:inline-flex">
               {profile.username}
               <span className="text-3xl leading-none text-muted-foreground">.</span>
               <span className="text-muted-foreground">loggu</span>

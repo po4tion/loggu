@@ -60,7 +60,7 @@ export async function Header() {
                 href="/"
                 className="transition-opacity hover:opacity-80"
               >
-                <span className="hidden text-lg font-semibold tracking-tight text-heading sm:inline-block">
+                <span className="hidden items-center text-lg font-semibold tracking-tight text-heading sm:inline-flex">
                   {displayProfile?.username}
                   <span className="text-3xl leading-none text-muted-foreground">.</span>
                   <span className="text-muted-foreground">loggu</span>
