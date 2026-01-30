@@ -63,7 +63,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, username, display_name, bio, avatar_url, created_at, github_url, linkedin_url, website_url')
+    .select('id, username, display_name, bio, avatar_url, github_url, linkedin_url, website_url')
     .eq('username', username)
     .single()
 
@@ -78,10 +78,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const isOwnProfile = user?.id === profile.id
   const displayName = profile.display_name || profile.username
   const initials = displayName.slice(0, 2).toUpperCase()
-  const joinDate = new Date(profile.created_at).toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-  })
 
   // Fetch posts - 본인이면 모든 글, 아니면 발행된 글만
   let postsQuery = supabase
@@ -150,7 +146,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           </div>
         )}
 
-        <p className="text-muted-foreground mt-4 text-sm">{joinDate} 가입</p>
       </article>
 
       <ProfilePostList
