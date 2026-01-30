@@ -265,7 +265,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   <Badge
                     key={tag.slug}
                     variant="outline"
-                    className="text-subtle px-[12px] py-[4px] text-[14px]"
+                    className="text-subtle px-3 py-1 text-[14px]"
                   >
                     #{tag.name}
                   </Badge>
