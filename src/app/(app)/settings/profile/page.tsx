@@ -4,8 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { ProfileEditForm } from '@/components/profile/profile-edit-form'
 
 export const metadata: Metadata = {
-  title: '프로필 설정',
-  description: '프로필 정보를 수정하세요',
+  title: '로꾸 설정',
+  description: '나만의 로꾸를 꾸며보세요',
   robots: { index: false, follow: false },
 }
 
@@ -53,8 +53,8 @@ export default async function ProfileSettingsPage() {
             />
           </svg>
         </div>
-        <h1 className="text-xl font-semibold tracking-tight text-heading">프로필 설정</h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">프로필 정보를 수정하세요</p>
+        <h1 className="text-xl font-semibold tracking-tight text-heading">로꾸 설정</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">나만의 로꾸를 꾸며보세요</p>
       </header>
 
       {/* 설정 카드 */}
