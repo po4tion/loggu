@@ -19,23 +19,23 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Blog Platform',
-    template: '%s | Blog Platform',
+    default: 'loggu',
+    template: '%s | loggu',
   },
   description: '글을 작성하고 공유하는 블로그 플랫폼',
   keywords: ['블로그', '글쓰기', '개발', '기술 블로그'],
-  authors: [{ name: 'Blog Platform' }],
+  authors: [{ name: 'loggu' }],
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
     url: SITE_URL,
-    siteName: 'Blog Platform',
-    title: 'Blog Platform',
+    siteName: 'loggu',
+    title: 'loggu',
     description: '글을 작성하고 공유하는 블로그 플랫폼',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog Platform',
+    title: 'loggu',
     description: '글을 작성하고 공유하는 블로그 플랫폼',
   },
   robots: {

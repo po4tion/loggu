@@ -1,5 +1,5 @@
 -- ============================================
--- Seed Data for Blog Platform
+-- Seed Data for loggu
 -- ============================================
 -- This file contains initial data for the blog platform
 -- Run with: supabase db reset (includes migrations + seed)

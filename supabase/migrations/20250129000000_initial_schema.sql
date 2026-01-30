@@ -1,5 +1,5 @@
 -- ============================================
--- Blog Platform Initial Schema
+-- loggu Initial Schema
 -- ============================================
 -- This migration creates all tables, functions, triggers, indexes, and RLS policies
 -- Based on docs/DATABASE.md specification

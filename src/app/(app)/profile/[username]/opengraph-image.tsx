@@ -104,7 +104,7 @@ export default async function OGImage({ params }: Props) {
             fontWeight: 600,
           }}
         >
-          Blog Platform
+          loggu
         </div>
       </div>
     ),

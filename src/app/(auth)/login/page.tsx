@@ -60,7 +60,7 @@ export default async function LoginPage({
               </svg>
             </div>
             <h1 className="text-xl font-semibold tracking-tight text-heading">
-              Blog Platform
+              loggu
             </h1>
             <p className="mt-1.5 text-sm text-muted-foreground">
               나만의 이야기를 기록하세요
