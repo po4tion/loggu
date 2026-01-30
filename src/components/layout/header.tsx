@@ -58,14 +58,20 @@ export async function Header() {
                 </Avatar>
               </Link>
             )}
-            <Link
-              href={homeLink as '/'}
-              className="transition-opacity hover:opacity-80"
-            >
+            {user && profile ? (
               <span className="hidden text-lg font-semibold tracking-tight text-heading sm:inline-block">
                 Blog Platform
               </span>
-            </Link>
+            ) : (
+              <Link
+                href={homeLink as '/'}
+                className="transition-opacity hover:opacity-80"
+              >
+                <span className="hidden text-lg font-semibold tracking-tight text-heading sm:inline-block">
+                  Blog Platform
+                </span>
+              </Link>
+            )}
           </div>
         </div>
 
