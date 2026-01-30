@@ -72,7 +72,7 @@ export async function Header() {
               >
                 <Link href="/posts/new">
                   <svg
-                    className="h-5 w-5"
+                    className="h-6 w-6"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"

@@ -19,7 +19,7 @@ export function ThemeToggle({ size = 'default' }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme()
 
   const buttonSize = size === 'lg' ? 'size-11' : 'h-9 w-9'
-  const iconSize = size === 'lg' ? 'size-6' : 'h-5 w-5'
+  const iconSize = size === 'lg' ? 'size-7' : 'h-6 w-6'
 
   return (
     <DropdownMenu>
