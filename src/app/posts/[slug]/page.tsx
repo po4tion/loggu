@@ -260,12 +260,9 @@ export default async function PostPage({ params }: PostPageProps) {
               <p className="text-xs text-subtle uppercase tracking-wide mb-3">Tags</p>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  <Link key={tag.slug} href={`/tags/${tag.slug}` as any}>
-                    <Badge variant="outline" className="hover:bg-secondary/80 py-[4px] px-[12px] text-[14px] text-subtle">
-                      #{tag.name}
-                    </Badge>
-                  </Link>
+                  <Badge key={tag.slug} variant="outline" className="py-[4px] px-[12px] text-[14px] text-subtle">
+                    #{tag.name}
+                  </Badge>
                 ))}
               </div>
             </div>

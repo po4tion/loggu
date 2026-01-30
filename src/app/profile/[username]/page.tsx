@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { PostCard } from '@/components/post/post-card'
+import { ProfilePostList } from '@/components/profile/profile-post-list'
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>
@@ -108,43 +108,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         <p className="text-muted-foreground mt-4 text-sm">{joinDate} 가입</p>
       </article>
 
-      <section className="mt-12">
-        <h2 className="text-xl font-semibold">
-          작성한 글
-          {posts && posts.length > 0 && (
-            <span className="text-muted-foreground ml-2 text-base font-normal">
-              ({posts.length})
-            </span>
-          )}
-        </h2>
-
-        {posts && posts.length > 0 ? (
-          <div className="mt-6 grid gap-4 lg:grid-cols-2">
-            {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={{
-                  id: post.id,
-                  title: post.title,
-                  slug: post.slug,
-                  excerpt: post.excerpt,
-                  cover_image_url: post.cover_image_url,
-                  published_at: post.published_at,
-                  views: post.views,
-                  author_username: profile.username,
-                  author_display_name: profile.display_name,
-                  author_avatar_url: profile.avatar_url,
-                  reading_time_minutes: post.reading_time_minutes,
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground mt-6 text-center py-8">
-            아직 작성한 글이 없습니다.
-          </p>
-        )}
-      </section>
+      <ProfilePostList
+        posts={posts ?? []}
+        profile={{
+          username: profile.username,
+          display_name: profile.display_name,
+          avatar_url: profile.avatar_url,
+        }}
+      />
     </main>
   )
 }
