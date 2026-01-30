@@ -58,7 +58,7 @@ export function UserMenu({ user, profile, className, showTitle = false }: UserMe
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 p-2" align="end" forceMount>
+      <DropdownMenuContent className="w-56 p-2" align="start" sideOffset={8} forceMount>
         <DropdownMenuLabel className="p-2 font-normal">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium leading-none">{displayName}</p>
