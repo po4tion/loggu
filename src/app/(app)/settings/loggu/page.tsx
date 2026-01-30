@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { ProfileEditForm } from '@/components/profile/profile-edit-form'
 
@@ -35,6 +37,15 @@ export default async function ProfileSettingsPage() {
 
   return (
     <main className="container mx-auto max-w-xl px-4 py-8 md:py-12">
+      {/* 뒤로가기 */}
+      <Link
+        href={`/@${profile.username}` as never}
+        className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        내 로꾸로 돌아가기
+      </Link>
+
       {/* 헤더 */}
       <header className="mb-8 text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
