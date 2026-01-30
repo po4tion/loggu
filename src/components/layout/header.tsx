@@ -64,7 +64,7 @@ export async function Header() {
               </span>
             ) : (
               <Link
-                href={homeLink as '/'}
+                href="/"
                 className="transition-opacity hover:opacity-80"
               >
                 <span className="hidden text-lg font-semibold tracking-tight text-heading sm:inline-block">
