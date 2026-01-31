@@ -2,6 +2,12 @@
 
 import { TiptapEditor } from '@/components/editor/tiptap-editor'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { createClient } from '@/lib/supabase/client'
 import { postSchema, type PostFormData } from '@/lib/validations/post'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -188,9 +194,9 @@ export function PostEditor({ authorId }: PostEditorProps) {
 
       {/* 에디터 영역 */}
       <main className="mx-auto max-w-3xl px-4 py-12">
-        {/* Add Cover 버튼 / 커버 이미지 */}
-        <div className="mb-8">
-          {!coverImage && !showCoverUpload && (
+        {/* Add Cover 버튼 */}
+        {!coverImage && (
+          <div className="mb-8">
             <button
               type="button"
               onClick={() => setShowCoverUpload(true)}
@@ -199,71 +205,23 @@ export function PostEditor({ authorId }: PostEditorProps) {
               <ImageIcon className="h-4 w-4" />
               Add Cover
             </button>
-          )}
+          </div>
+        )}
 
-          {/* 업로드 패널 */}
-          {showCoverUpload && !coverImage && (
-            <div className="border-border bg-background rounded-lg border">
-              <div className="border-border flex items-center justify-between border-b px-4 py-2">
-                <div className="flex items-center gap-4">
-                  <span className="border-b-2 border-blue-600 pb-1 text-sm font-medium">
-                    Upload
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowCoverUpload(false)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <div className="p-6">
-                <div
-                  className="border-border hover:border-muted-foreground flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed py-12 transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <button
-                    type="button"
-                    className="border-border bg-background hover:bg-muted inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors"
-                    disabled={isUploading}
-                  >
-                    <Upload className="h-4 w-4" />
-                    {isUploading ? 'Uploading...' : 'Upload Image'}
-                  </button>
-                  <p className="text-muted-foreground mt-3 text-sm">
-                    Recommended dimension is 1600 × 840
-                  </p>
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) handleCoverUpload(file)
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* 업로드된 커버 이미지 */}
-          {coverImage && (
-            <div className="group relative aspect-1600/840 w-full overflow-hidden rounded-lg">
-              <Image src={coverImage} alt="Cover" fill className="object-cover" unoptimized />
-              <button
-                type="button"
-                onClick={handleRemoveCover}
-                className="bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground absolute top-3 right-3 rounded-md p-2 opacity-0 backdrop-blur-sm transition-all group-hover:opacity-100"
-                title="Remove cover"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          )}
-        </div>
+        {/* 업로드된 커버 이미지 */}
+        {coverImage && (
+          <div className="group relative mb-8 aspect-[1600/840] w-full overflow-hidden rounded-lg">
+            <Image src={coverImage} alt="Cover" fill className="object-cover" unoptimized />
+            <button
+              type="button"
+              onClick={handleRemoveCover}
+              className="bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground absolute top-3 right-3 rounded-md p-2 opacity-0 backdrop-blur-sm transition-all group-hover:opacity-100"
+              title="Remove cover"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        )}
 
         {/* 제목 입력 */}
         <input
@@ -289,6 +247,45 @@ export function PostEditor({ authorId }: PostEditorProps) {
           />
         </div>
       </main>
+
+      {/* 커버 업로드 모달 */}
+      <Dialog open={showCoverUpload} onOpenChange={setShowCoverUpload}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-4">
+              <span className="border-b-2 border-blue-600 pb-1">Upload</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="pt-4">
+            <div
+              className="border-border hover:border-muted-foreground flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed py-12 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <button
+                type="button"
+                className="border-border bg-background hover:bg-muted inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors"
+                disabled={isUploading}
+              >
+                <Upload className="h-4 w-4" />
+                {isUploading ? 'Uploading...' : 'Upload Image'}
+              </button>
+              <p className="text-muted-foreground mt-3 text-sm">
+                Recommended dimension is 1600 × 840
+              </p>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) handleCoverUpload(file)
+              }}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
