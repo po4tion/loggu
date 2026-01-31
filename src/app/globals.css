@@ -146,6 +146,16 @@
   pointer-events: none;
 }
 
+.tiptap h1.is-empty::before,
+.tiptap h2.is-empty::before,
+.tiptap h3.is-empty::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 .tiptap pre {
   background-color: var(--muted);
   border-radius: var(--radius);

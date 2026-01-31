@@ -61,6 +61,7 @@ export function TiptapEditor({
         height: 360,
       }),
       Placeholder.configure({
+        includeChildren: true,
         placeholder: ({ node }) => {
           if (node.type.name === 'heading') {
             const level = node.attrs.level as number
