@@ -11,6 +11,7 @@ import { all, createLowlight } from 'lowlight'
 import { SlashCommand } from './slash-command'
 import { CodeBlockComponent } from './code-block-component'
 import { LinkPopover } from './link-popover'
+import { LinkBubbleMenu } from './link-bubble-menu'
 import { useState, useEffect } from 'react'
 
 // lowlight 인스턴스 생성 (all languages 포함)
@@ -156,6 +157,19 @@ export function TiptapEditor({
     }
   }, [editor])
 
+  const openLinkPopoverForEdit = () => {
+    if (!editor) return
+
+    const { from } = editor.state.selection
+    const coords = editor.view.coordsAtPos(from)
+
+    setLinkPopoverPosition({
+      top: coords.bottom + 8,
+      left: coords.left,
+    })
+    setLinkPopoverOpen(true)
+  }
+
   if (!editor) {
     return null
   }
@@ -164,6 +178,7 @@ export function TiptapEditor({
     return (
       <>
         <EditorContent editor={editor} />
+        <LinkBubbleMenu editor={editor} onEditLink={openLinkPopoverForEdit} />
         <LinkPopover
           editor={editor}
           isOpen={linkPopoverOpen}
@@ -182,6 +197,7 @@ export function TiptapEditor({
           <EditorContent editor={editor} />
         </div>
       </div>
+      <LinkBubbleMenu editor={editor} onEditLink={openLinkPopoverForEdit} />
       <LinkPopover
         editor={editor}
         isOpen={linkPopoverOpen}

@@ -12,25 +12,40 @@ interface LinkPopoverProps {
 }
 
 export function LinkPopover({ editor, isOpen, onClose, position }: LinkPopoverProps) {
-  const [anchorText, setAnchorText] = useState('')
-  const [url, setUrl] = useState('')
   const popoverRef = useRef<HTMLDivElement>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
 
+  // Compute initial values when popover opens
+  const getInitialValues = () => {
+    if (!isOpen) return { anchorText: '', url: '' }
+    const { from, to } = editor.state.selection
+    const selectedText = editor.state.doc.textBetween(from, to, '')
+    const linkMark = editor.getAttributes('link')
+    const existingUrl = linkMark.href && linkMark.href !== '#' ? linkMark.href : ''
+    return { anchorText: selectedText || '', url: existingUrl }
+  }
+
+  const initialValues = getInitialValues()
+  const [anchorText, setAnchorText] = useState(initialValues.anchorText)
+  const [url, setUrl] = useState(initialValues.url)
+
+  // Reset values when popover opens
+  const prevIsOpenRef = useRef(isOpen)
+  if (isOpen && !prevIsOpenRef.current) {
+    const values = getInitialValues()
+    if (values.anchorText !== anchorText) setAnchorText(values.anchorText)
+    if (values.url !== url) setUrl(values.url)
+  }
+  prevIsOpenRef.current = isOpen
+
   useEffect(() => {
     if (isOpen) {
-      // Get selected text
-      const { from, to } = editor.state.selection
-      const selectedText = editor.state.doc.textBetween(from, to, '')
-      setAnchorText(selectedText || '')
-      setUrl('')
-
       // Focus URL input after a short delay
       setTimeout(() => {
         urlInputRef.current?.focus()
       }, 100)
     }
-  }, [isOpen, editor])
+  }, [isOpen])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

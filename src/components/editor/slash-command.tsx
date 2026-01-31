@@ -177,9 +177,14 @@ const CommandList = forwardRef<CommandListRef, CommandListProps>(
       [items, command]
     )
 
-    useEffect(() => {
-      setSelectedIndex(0)
-    }, [items])
+    // Reset selected index when items change
+    const prevItemsRef = useRef(items)
+    if (prevItemsRef.current !== items) {
+      prevItemsRef.current = items
+      if (selectedIndex !== 0) {
+        setSelectedIndex(0)
+      }
+    }
 
     useEffect(() => {
       const selectedElement = itemRefs.current[selectedIndex]
