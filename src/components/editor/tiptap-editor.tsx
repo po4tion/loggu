@@ -8,6 +8,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Youtube from '@tiptap/extension-youtube'
 import { common, createLowlight } from 'lowlight'
+import { SlashCommand } from './slash-command'
 
 // lowlight 인스턴스 생성 (common languages 포함)
 const lowlight = createLowlight(common)
@@ -62,6 +63,7 @@ export function TiptapEditor({
       Placeholder.configure({
         placeholder,
       }),
+      SlashCommand,
     ],
     content,
     editorProps: {
