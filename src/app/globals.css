@@ -339,3 +339,25 @@
   border-top: 1px solid var(--border);
   margin: 1.5rem 0;
 }
+
+/* Emoji Picker Reset - Override prose/tiptap styles */
+.EmojiPickerReact,
+.EmojiPickerReact * {
+  all: revert;
+  box-sizing: border-box;
+}
+
+.EmojiPickerReact ul,
+.EmojiPickerReact li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.EmojiPickerReact h2 {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-left: 10px !important;
+}

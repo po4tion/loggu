@@ -10,6 +10,7 @@ import Youtube from '@tiptap/extension-youtube'
 import { all, createLowlight } from 'lowlight'
 import { SlashCommand } from './slash-command'
 import { CodeBlockComponent } from './code-block-component'
+import { Callout } from './callout-extension'
 import { LinkPopover } from './link-popover'
 import { LinkBubbleMenu } from './link-bubble-menu'
 import { ImagePopover } from './image-popover'
@@ -131,6 +132,7 @@ export function TiptapEditor({
           return placeholder
         },
       }),
+      Callout,
       SlashCommand,
     ],
     content,

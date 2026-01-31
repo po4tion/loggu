@@ -28,7 +28,7 @@ import {
   Minus,
   ImageIcon,
   Link,
-  Youtube,
+  Lightbulb,
 } from 'lucide-react'
 import type { Editor, Range } from '@tiptap/core'
 
@@ -113,6 +113,19 @@ const commands: CommandItem[] = [
     },
   },
   {
+    title: 'Callout',
+    description: 'Add a callout block',
+    icon: <Lightbulb className="h-5 w-5" />,
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContent({ type: 'callout' })
+        .run()
+    },
+  },
+  {
     title: 'Image',
     description: 'Insert an image from URL',
     icon: <ImageIcon className="h-5 w-5" />,
@@ -139,17 +152,6 @@ const commands: CommandItem[] = [
 
       // Dispatch custom event to open link popover
       window.dispatchEvent(new CustomEvent('openLinkPopover'))
-    },
-  },
-  {
-    title: 'YouTube',
-    description: 'Embed a YouTube video',
-    icon: <Youtube className="h-5 w-5" />,
-    command: ({ editor, range }) => {
-      const url = window.prompt('Enter YouTube URL')
-      if (url) {
-        editor.chain().focus().deleteRange(range).setYoutubeVideo({ src: url }).run()
-      }
     },
   },
 ]
