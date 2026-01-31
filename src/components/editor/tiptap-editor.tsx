@@ -1,17 +1,18 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Youtube from '@tiptap/extension-youtube'
-import { common, createLowlight } from 'lowlight'
+import { all, createLowlight } from 'lowlight'
 import { SlashCommand } from './slash-command'
+import { CodeBlockComponent } from './code-block-component'
 
-// lowlight 인스턴스 생성 (common languages 포함)
-const lowlight = createLowlight(common)
+// lowlight 인스턴스 생성 (all languages 포함)
+const lowlight = createLowlight(all)
 
 interface TiptapEditorProps {
   content: string
@@ -35,11 +36,12 @@ export function TiptapEditor({
         },
         codeBlock: false, // CodeBlockLowlight 사용
       }),
-      CodeBlockLowlight.configure({
-        lowlight,
-        HTMLAttributes: {
-          class: 'hljs',
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockComponent)
         },
+      }).configure({
+        lowlight,
       }),
       Image.configure({
         HTMLAttributes: {
