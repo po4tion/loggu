@@ -1,7 +1,7 @@
+import { createDraft } from '@/lib/actions/draft-actions'
+import { createClient } from '@/lib/supabase/server'
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { PostEditor } from '@/components/post/post-editor'
 
 export const metadata: Metadata = {
   title: '새 글 작성',
@@ -19,5 +19,13 @@ export default async function NewPostPage() {
     redirect('/login?next=/posts/new')
   }
 
-  return <PostEditor authorId={user.id} />
+  // Create a new draft and redirect to edit page
+  const draft = await createDraft(user.id)
+
+  if (!draft) {
+    // If draft creation failed, redirect to home
+    redirect('/')
+  }
+
+  redirect(`/draft/${draft.id}`)
 }

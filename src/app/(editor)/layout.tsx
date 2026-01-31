@@ -1,7 +1,9 @@
-export default function EditorLayout({
+import { QueryProvider } from '@/components/providers/query-provider'
+
+export default function EditorRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <>{children}</>
+  return <QueryProvider>{children}</QueryProvider>
 }
