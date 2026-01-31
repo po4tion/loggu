@@ -18,10 +18,36 @@ export function LinkPopover({ editor, isOpen, onClose, position }: LinkPopoverPr
   // Compute initial values from editor state
   const initialValues = useMemo(() => {
     if (!isOpen) return { anchorText: '', url: '' }
+
     const { from, to } = editor.state.selection
+    const linkAttrs = editor.getAttributes('link')
+    const existingUrl = linkAttrs.href && linkAttrs.href !== '#' ? linkAttrs.href : ''
+
+    // If editing an existing link, get the full link text
+    if (editor.isActive('link')) {
+      const { $from } = editor.state.selection
+      let linkStart = from
+      let linkEnd = to
+
+      // Find link boundaries
+      const linkMarkType = editor.schema.marks.link
+      editor.state.doc.nodesBetween($from.start(), $from.end(), (node, pos) => {
+        if (node.isText && node.marks.some((m) => m.type === linkMarkType)) {
+          const nodeStart = pos
+          const nodeEnd = pos + node.nodeSize
+          if (from >= nodeStart && from <= nodeEnd) {
+            linkStart = nodeStart
+            linkEnd = nodeEnd
+          }
+        }
+      })
+
+      const linkText = editor.state.doc.textBetween(linkStart, linkEnd, '')
+      return { anchorText: linkText, url: existingUrl }
+    }
+
+    // Otherwise, use selected text
     const selectedText = editor.state.doc.textBetween(from, to, '')
-    const linkMark = editor.getAttributes('link')
-    const existingUrl = linkMark.href && linkMark.href !== '#' ? linkMark.href : ''
     return { anchorText: selectedText || '', url: existingUrl }
   }, [isOpen, editor])
 
