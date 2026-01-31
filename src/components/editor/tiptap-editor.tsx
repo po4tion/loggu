@@ -12,6 +12,7 @@ import { SlashCommand } from './slash-command'
 import { CodeBlockComponent } from './code-block-component'
 import { LinkPopover } from './link-popover'
 import { LinkBubbleMenu } from './link-bubble-menu'
+import { ImagePopover } from './image-popover'
 import { useState, useEffect } from 'react'
 
 // lowlight 인스턴스 생성 (all languages 포함)
@@ -33,6 +34,10 @@ export function TiptapEditor({
   const [linkPopoverOpen, setLinkPopoverOpen] = useState(false)
   const [linkPopoverPosition, setLinkPopoverPosition] = useState<{ top: number; left: number } | null>(null)
   const [linkPopoverKey, setLinkPopoverKey] = useState(0)
+
+  const [imagePopoverOpen, setImagePopoverOpen] = useState(false)
+  const [imagePopoverPosition, setImagePopoverPosition] = useState<{ top: number; left: number } | null>(null)
+  const [imagePopoverKey, setImagePopoverKey] = useState(0)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -145,7 +150,7 @@ export function TiptapEditor({
     },
   })
 
-  // Listen for custom event from slash command
+  // Listen for custom event from slash command (Link)
   useEffect(() => {
     const handleOpenLinkPopover = () => {
       if (!editor) return
@@ -165,6 +170,29 @@ export function TiptapEditor({
     window.addEventListener('openLinkPopover', handleOpenLinkPopover)
     return () => {
       window.removeEventListener('openLinkPopover', handleOpenLinkPopover)
+    }
+  }, [editor])
+
+  // Listen for custom event from slash command (Image)
+  useEffect(() => {
+    const handleOpenImagePopover = () => {
+      if (!editor) return
+
+      // Get cursor position from the editor's view
+      const { from } = editor.state.selection
+      const coords = editor.view.coordsAtPos(from)
+
+      setImagePopoverPosition({
+        top: coords.bottom + 8,
+        left: coords.left,
+      })
+      setImagePopoverKey((prev) => prev + 1)
+      setImagePopoverOpen(true)
+    }
+
+    window.addEventListener('openImagePopover', handleOpenImagePopover)
+    return () => {
+      window.removeEventListener('openImagePopover', handleOpenImagePopover)
     }
   }, [editor])
 
@@ -192,11 +220,18 @@ export function TiptapEditor({
         <EditorContent editor={editor} />
         <LinkBubbleMenu editor={editor} onEditLink={openLinkPopoverForEdit} />
         <LinkPopover
-          key={linkPopoverKey}
+          key={`link-${linkPopoverKey}`}
           editor={editor}
           isOpen={linkPopoverOpen}
           onClose={() => setLinkPopoverOpen(false)}
           position={linkPopoverPosition}
+        />
+        <ImagePopover
+          key={`image-${imagePopoverKey}`}
+          editor={editor}
+          isOpen={imagePopoverOpen}
+          onClose={() => setImagePopoverOpen(false)}
+          position={imagePopoverPosition}
         />
       </>
     )
@@ -212,11 +247,18 @@ export function TiptapEditor({
       </div>
       <LinkBubbleMenu editor={editor} onEditLink={openLinkPopoverForEdit} />
       <LinkPopover
-        key={linkPopoverKey}
+        key={`link-${linkPopoverKey}`}
         editor={editor}
         isOpen={linkPopoverOpen}
         onClose={() => setLinkPopoverOpen(false)}
         position={linkPopoverPosition}
+      />
+      <ImagePopover
+        key={`image-${imagePopoverKey}`}
+        editor={editor}
+        isOpen={imagePopoverOpen}
+        onClose={() => setImagePopoverOpen(false)}
+        position={imagePopoverPosition}
       />
     </>
   )

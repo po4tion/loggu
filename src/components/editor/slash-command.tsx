@@ -117,10 +117,11 @@ const commands: CommandItem[] = [
     description: 'Insert an image from URL',
     icon: <ImageIcon className="h-5 w-5" />,
     command: ({ editor, range }) => {
-      const url = window.prompt('Enter image URL')
-      if (url) {
-        editor.chain().focus().deleteRange(range).setImage({ src: url }).run()
-      }
+      // Delete the slash command range
+      editor.chain().focus().deleteRange(range).run()
+
+      // Dispatch custom event to open image popover
+      window.dispatchEvent(new CustomEvent('openImagePopover'))
     },
   },
   {
