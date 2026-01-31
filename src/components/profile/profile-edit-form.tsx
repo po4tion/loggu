@@ -54,7 +54,6 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
     const { error } = await supabase
       .from('profiles')
       .update({
-        username: data.username,
         display_name: data.display_name || null,
         bio: data.bio || null,
         github_url: data.github_url || null,
@@ -66,11 +65,7 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
     setIsLoading(false)
 
     if (error) {
-      if (error.code === '23505') {
-        setMessage({ type: 'error', text: '이미 사용 중인 사용자명입니다' })
-      } else {
-        setMessage({ type: 'error', text: '프로필 업데이트에 실패했습니다' })
-      }
+      setMessage({ type: 'error', text: '프로필 업데이트에 실패했습니다' })
       return
     }
 
@@ -92,20 +87,17 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
         </p>
       </div>
 
-      {/* 사용자명 */}
+      {/* 사용자명 (읽기 전용) */}
       <div className="space-y-2">
         <Label htmlFor="username" className="text-sm font-medium">
           사용자명
         </Label>
         <Input
           id="username"
-          placeholder="username"
-          className="transition-all focus:ring-2 focus:ring-primary/20"
-          {...register('username')}
+          value={profile.username}
+          disabled
+          className="bg-muted/50 cursor-not-allowed"
         />
-        {errors.username && (
-          <p className="text-xs text-destructive">{errors.username.message}</p>
-        )}
         <p className="text-xs text-muted-foreground">
           프로필 URL: /@{profile.username}
         </p>
