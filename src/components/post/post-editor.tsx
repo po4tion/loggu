@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { createClient } from '@/lib/supabase/client'
 import { postSchema, type PostFormData } from '@/lib/validations/post'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Image as ImageIcon, Upload, X } from 'lucide-react'
+import { AlignLeft, ArrowLeft, Image as ImageIcon, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
@@ -34,6 +34,7 @@ export function PostEditor({ authorId }: PostEditorProps) {
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [coverImagePath, setCoverImagePath] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [showSubtitle, setShowSubtitle] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { register, handleSubmit, control, setValue } = useForm<PostFormData>({
@@ -196,60 +197,75 @@ export function PostEditor({ authorId }: PostEditorProps) {
 
       {/* 에디터 영역 */}
       <main className="mx-auto max-w-3xl px-4 py-12">
-        {/* Add Cover 버튼 + Popover */}
-        {!coverImage && (
-          <div className="mb-8">
-            <Popover open={showCoverUpload} onOpenChange={setShowCoverUpload}>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm transition-colors"
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  Add Cover
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="start" className="w-[500px] p-0" sideOffset={8}>
-                <div className="flex items-center justify-between border-b px-4 py-3">
-                  <span className="text-sm font-medium">Upload</span>
+        {/* Add Cover / Add Subtitle 버튼 */}
+        {(!coverImage || !showSubtitle) && (
+          <div className="mb-8 flex items-center gap-4">
+            {/* Add Cover 버튼 + Popover */}
+            {!coverImage && (
+              <Popover open={showCoverUpload} onOpenChange={setShowCoverUpload}>
+                <PopoverTrigger asChild>
                   <button
                     type="button"
-                    onClick={() => setShowCoverUpload(false)}
-                    className="text-muted-foreground hover:text-foreground"
+                    className="text-foreground/70 hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
                   >
-                    <X className="h-5 w-5" />
+                    <ImageIcon className="h-4 w-4" />
+                    Add Cover
                   </button>
-                </div>
-                <div className="p-4">
-                  <div
-                    className="border-border hover:border-muted-foreground flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed py-10 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-[500px] p-0" sideOffset={8}>
+                  <div className="flex items-center justify-between border-b px-4 py-3">
+                    <span className="text-sm font-medium">Upload</span>
                     <button
                       type="button"
-                      className="border-border bg-background hover:bg-muted inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors"
-                      disabled={isUploading}
+                      onClick={() => setShowCoverUpload(false)}
+                      className="text-muted-foreground hover:text-foreground"
                     >
-                      <Upload className="h-4 w-4" />
-                      {isUploading ? 'Uploading...' : 'Upload Image'}
+                      <X className="h-5 w-5" />
                     </button>
-                    <p className="text-muted-foreground mt-3 text-sm">
-                      Recommended dimension is 1600 × 840
-                    </p>
                   </div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/gif,image/webp"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) handleCoverUpload(file)
-                    }}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
+                  <div className="p-4">
+                    <div
+                      className="border-border hover:border-muted-foreground flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed py-10 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <button
+                        type="button"
+                        className="border-border bg-background hover:bg-muted inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors"
+                        disabled={isUploading}
+                      >
+                        <Upload className="h-4 w-4" />
+                        {isUploading ? 'Uploading...' : 'Upload Image'}
+                      </button>
+                      <p className="text-muted-foreground mt-3 text-sm">
+                        Recommended dimension is 1600 × 840
+                      </p>
+                    </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) handleCoverUpload(file)
+                      }}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+
+            {/* Add Subtitle 버튼 */}
+            {!showSubtitle && (
+              <button
+                type="button"
+                onClick={() => setShowSubtitle(true)}
+                className="text-foreground/70 hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
+              >
+                <AlignLeft className="h-4 w-4" />
+                Add Subtitle
+              </button>
+            )}
           </div>
         )}
 
@@ -272,9 +288,32 @@ export function PostEditor({ authorId }: PostEditorProps) {
         <input
           type="text"
           placeholder="Article Title..."
-          className="text-foreground placeholder:text-muted-foreground/50 w-full border-0 bg-transparent text-4xl font-bold focus:ring-0 focus:outline-none"
+          className="text-foreground placeholder:text-foreground/50 w-full border-0 bg-transparent text-4xl font-bold focus:ring-0 focus:outline-none"
           {...register('title')}
         />
+
+        {/* 부제목 입력 */}
+        {showSubtitle && (
+          <div className="mt-4 flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Article Subtitle..."
+              autoComplete="off"
+              className="text-foreground placeholder:text-foreground/50 flex-1 border-0 bg-transparent text-xl focus:ring-0 focus:outline-none"
+              {...register('excerpt')}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setShowSubtitle(false)
+                setValue('excerpt', '')
+              }}
+              className="text-muted-foreground hover:text-foreground p-1 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        )}
 
         {/* 본문 에디터 */}
         <div className="mt-8">
