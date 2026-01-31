@@ -10,6 +10,8 @@ import Youtube from '@tiptap/extension-youtube'
 import { all, createLowlight } from 'lowlight'
 import { SlashCommand } from './slash-command'
 import { CodeBlockComponent } from './code-block-component'
+import { LinkPopover } from './link-popover'
+import { useState, useEffect } from 'react'
 
 // lowlight 인스턴스 생성 (all languages 포함)
 const lowlight = createLowlight(all)
@@ -27,6 +29,9 @@ export function TiptapEditor({
   placeholder = '내용을 입력하세요...',
   minimal = false,
 }: TiptapEditorProps) {
+  const [linkPopoverOpen, setLinkPopoverOpen] = useState(false)
+  const [linkPopoverPosition, setLinkPopoverPosition] = useState<{ top: number; left: number } | null>(null)
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -129,21 +134,61 @@ export function TiptapEditor({
     },
   })
 
+  // Listen for custom event from slash command
+  useEffect(() => {
+    const handleOpenLinkPopover = () => {
+      if (!editor) return
+
+      // Get cursor position from the editor's view
+      const { from } = editor.state.selection
+      const coords = editor.view.coordsAtPos(from)
+
+      setLinkPopoverPosition({
+        top: coords.bottom + 8,
+        left: coords.left,
+      })
+      setLinkPopoverOpen(true)
+    }
+
+    window.addEventListener('openLinkPopover', handleOpenLinkPopover)
+    return () => {
+      window.removeEventListener('openLinkPopover', handleOpenLinkPopover)
+    }
+  }, [editor])
+
   if (!editor) {
     return null
   }
 
   if (minimal) {
-    return <EditorContent editor={editor} />
+    return (
+      <>
+        <EditorContent editor={editor} />
+        <LinkPopover
+          editor={editor}
+          isOpen={linkPopoverOpen}
+          onClose={() => setLinkPopoverOpen(false)}
+          position={linkPopoverPosition}
+        />
+      </>
+    )
   }
 
   return (
-    <div className="rounded-lg border">
-      <EditorToolbar editor={editor} />
-      <div className="p-4">
-        <EditorContent editor={editor} />
+    <>
+      <div className="rounded-lg border">
+        <EditorToolbar editor={editor} />
+        <div className="p-4">
+          <EditorContent editor={editor} />
+        </div>
       </div>
-    </div>
+      <LinkPopover
+        editor={editor}
+        isOpen={linkPopoverOpen}
+        onClose={() => setLinkPopoverOpen(false)}
+        position={linkPopoverPosition}
+      />
+    </>
   )
 }
 

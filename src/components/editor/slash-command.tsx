@@ -128,15 +128,16 @@ const commands: CommandItem[] = [
     description: 'Insert a link',
     icon: <Link className="h-5 w-5" />,
     command: ({ editor, range }) => {
-      const url = window.prompt('Enter URL')
-      if (url) {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .insertContent(`<a href="${url}">${url}</a>`)
-          .run()
-      }
+      const placeholderText = 'Edit this text'
+      // Delete the slash command range and insert placeholder link
+      editor.chain().focus().deleteRange(range).insertContent(`<a href="#">${placeholderText}</a>`).run()
+
+      // Set selection after content is inserted
+      const { to } = editor.state.selection
+      editor.chain().setTextSelection({ from: to - placeholderText.length, to }).run()
+
+      // Dispatch custom event to open link popover
+      window.dispatchEvent(new CustomEvent('openLinkPopover'))
     },
   },
   {
