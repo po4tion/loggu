@@ -146,6 +146,40 @@
   pointer-events: none;
 }
 
+.tiptap h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.tiptap h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tiptap h3 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.tiptap h1.is-empty::before,
+.tiptap h2.is-empty::before,
+.tiptap h3.is-empty::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 .tiptap pre {
   background-color: var(--muted);
   border-radius: var(--radius);
@@ -166,9 +200,164 @@
   padding: 0;
 }
 
+/* Custom Code Block Styles */
+.code-block-wrapper pre {
+  background-color: rgb(23 23 23) !important;
+  margin: 0;
+}
+
+.code-block-wrapper pre code {
+  background-color: transparent !important;
+  color: rgb(229 229 229);
+}
+
+.code-block-wrapper pre code > div {
+  background-color: transparent !important;
+}
+
+.code-block-wrapper [data-node-view-content] {
+  background-color: transparent !important;
+  outline: none;
+}
+
+/* Highlight.js Syntax Theme (Dracula-like for dark code blocks) */
+.hljs-comment,
+.hljs-quote {
+  color: #6272a4 !important;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: #ff79c6 !important;
+}
+
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-meta-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+  color: #f1fa8c !important;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #8be9fd !important;
+}
+
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+  color: #50fa7b !important;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-link {
+  color: #bd93f9 !important;
+}
+
+.hljs-built_in,
+.hljs-deletion {
+  color: #ff5555 !important;
+}
+
+.hljs-params {
+  color: #ffb86c !important;
+}
+
+.hljs-property {
+  color: #66d9ef !important;
+}
+
+.hljs-punctuation {
+  color: #f8f8f2 !important;
+}
+
+.hljs-operator {
+  color: #ff79c6 !important;
+}
+
+.hljs-function {
+  color: #50fa7b !important;
+}
+
+.hljs-formula {
+  background: #44475a;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
 .tiptap blockquote {
   border-left: 3px solid var(--border);
   padding-left: 1rem;
   margin-left: 0;
   font-style: italic;
+}
+
+.tiptap ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.tiptap ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.tiptap li {
+  margin: 0.25rem 0;
+}
+
+.tiptap li p {
+  margin: 0;
+}
+
+.tiptap hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+
+/* Emoji Picker Reset - Override prose/tiptap styles */
+.EmojiPickerReact,
+.EmojiPickerReact * {
+  all: revert;
+  box-sizing: border-box;
+}
+
+.EmojiPickerReact ul,
+.EmojiPickerReact li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.EmojiPickerReact h2 {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-left: 10px !important;
 }

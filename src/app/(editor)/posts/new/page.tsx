@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { PostCreateForm } from '@/components/post/post-create-form'
+import { PostEditor } from '@/components/post/post-editor'
 
 export const metadata: Metadata = {
   title: '새 글 작성',
@@ -19,13 +19,5 @@ export default async function NewPostPage() {
     redirect('/login?next=/posts/new')
   }
 
-  return (
-    <main className="container mx-auto max-w-4xl px-6 py-8 md:py-10">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold">새 글 작성</h1>
-      </header>
-
-      <PostCreateForm authorId={user.id} />
-    </main>
-  )
+  return <PostEditor authorId={user.id} />
 }
